@@ -38,24 +38,40 @@ struct regs32
     uint32_t eip, cs, eflags, usresp, ss; 
 };
 
-#define ICW1_ICW4 0x01      /* Indicates that ICW4 will be present */
-#define ICW1_SINGLE 0x02    /* Single (cascade) mode */
-#define ICW1_INTERVAL4 0x04 /* Call address interval 4 (8) */
-#define ICW1_LEVEL 0x08     /* Level triggered (edge) mode */
-#define ICW1_INIT 0x10      /* Initialization - required! */
 #define PIC1 0x20 /* IO base address for master PIC */
 #define PIC2 0xA0 /* IO base address for slave PIC */
-#define OFFSET_PIC1 20
-#define OFFSET_PIC2 (OFFSET_PIC1 + 8)
+
+#define OFFSET_PIC1 32
+#define OFFSET_PIC2 40
+
 #define PIC1_COMMAND PIC1
 #define PIC1_DATA (PIC1 + 1)
 #define PIC2_COMMAND PIC2
 #define PIC2_DATA (PIC2 + 1)
+
 #define PIC_EOI 0x20
-#define PIC1_START_INTERRUPT 0x20
-#define PIC2_START_INTERRUPT 0x28
-#define PIC2_END_INTERRUPT PIC2_START_INTERRUPT + 7
+
+#define PIC2_END_INTERRUPT OFFSET_PIC2 + 7
 #define PIC_ACK 0x20
+
+enum {
+	IRQ_TIMER,
+	IRQ_KEYBOARD,
+	IRQ_CASCADE,
+	IRQ_COM2,
+	IRQ_COM1,
+	IRQ_LPT2,
+	IRQ_FLOPPY,
+	IRQ_LPT1, // spurious
+	IRQ_CMOS,
+	IRQ_PERIPH1,
+	IRQ_PERIPH2,
+	IRQ_PERIPH3,
+	IRQ_MOUSE,
+	IRQ_COP,
+	IRQ_ATA_PRIM,
+	IRQ_ATA_SEC,
+};
 
 #include "../display/include.h"
 #include "../ports/include.h"

@@ -10,7 +10,7 @@ extern void exception_handler(struct regs32 regs) {
 
 extern void irq_handler(struct regs32 regs) {
     uint32_t irq = isr_exception_type - 33;
-    gfx_drawInt(irq, 300,300);
+    //gfx_drawInt(irq, 300,300);
     if(idt_customs[irq] != 0)
     {
         ((func*)(idt_customs[irq]))();

@@ -2,14 +2,11 @@ uint32_t tick = 0;
 static void timer_callback()
 {
     tick++;
-    gfx_drawInt(200,250,tick);
+    gfx_drawInt(tick++,325,325);
 }
 
-void init_timer(uint32_t frequency)
+void timer_init(uint32_t frequency)
 {
-
-   idt_load_interrupt(0, timer_callback);
-
    // The value we send to the PIT is the value to divide it's input clock
    // (1193180 Hz) by, to get our required frequency. Important to note is
    // that the divisor must be small enough to fit into 16-bits.

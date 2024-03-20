@@ -35,7 +35,7 @@ void gfx_drawTransparentChar_ctx(unsigned char character, int x, int y, gfx_ctx_
 
     for (cy = 0; cy < 16; cy++)
     {
-        for (cx = 0; cx < 8; cx++)
+        for (cx = 1; cx < 8; cx++)
         {
             if(glyph[cy] & mask[8 - cx]) 
                 gfx_drawPixel(x + cx, y + cy - 12);
@@ -43,6 +43,22 @@ void gfx_drawTransparentChar_ctx(unsigned char character, int x, int y, gfx_ctx_
     }
 }
 
+void gfx_drawInvertedTranparentChar(unsigned char character, int x, int y)
+{
+    int cx, cy;
+    int mask[8] = {1, 2, 4, 8, 16, 32, 64, 128};
+    
+    uint8_t *glyph = VGA_FONT + (int)character * 16;
+
+    for (cy = 0; cy < 16; cy++)
+    {
+        for (cx = 1; cx < 8; cx++)
+        {
+            if(glyph[cy] & mask[8 - cx]) 
+                gfx_drawInvertedPixel(x + cx, y + cy - 12);
+        }
+    }
+}
 /// @brief Put transparent character using current context
 static inline void gfx_drawTransparentChar(unsigned char character, int x, int y)
 {
@@ -60,11 +76,18 @@ void gfx_drawString(char * string, int x, int y)
     }  while(current != 0);
 }
 
-void gfx_drawInt(uint32_t number, int x, int y)
+void gfx_drawInt(int32_t number, int x, int y)
 {
     int char_spacing = gfx_current_ctx.char_spacing;
 
-    int len = numLen(number) - 1;
+    if(number < 0)
+    {
+        number = -number;
+        gfx_drawChar('-', x, y);
+        x += char_spacing;
+    }
+
+    int len = numLen((uint32_t)number) - 1;
     x += len * char_spacing;
     if (number == 0) {
         gfx_drawChar('0', x, y);
