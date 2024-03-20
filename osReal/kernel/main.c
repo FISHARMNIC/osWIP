@@ -15,19 +15,16 @@ void kernel_entry()
 
     idt_init();
     
-    mouse_init();
-    idt_set_custom(12, mouse_handler); 
+    //mouse_init();
+    //idt_set_custom(12, mouse_handler); 
     idt_set_custom(1, keyboard_handler);
     
     PIC_remap();
     enable_interrupts();
     
-    enable_irq(12);
+    enable_irq(1);
     // triggering irq 0, should that be 32 and the pic is not being remapped?
     // clicking key triggers fault 1, should be irq 1. Only works once since buffer is not being read and EOI not sent.
-
-
-    asm volatile("sti; int $44; int $44;"); //32 + 12
 
     puts("TEST1", 0, 50);
     puts("TEST2", 200, 70);

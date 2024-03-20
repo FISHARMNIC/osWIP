@@ -4,7 +4,6 @@ uint8_t mouse_byte[3];    //signed char
 uint8_t mouse_x=0;         //signed char
 uint8_t mouse_y=0;         //signed char
 
-int times = 0;
 void mouse_handler() //struct regs *a_r (not used but just there)
 {
   // needs to be formattd as irq
@@ -26,8 +25,7 @@ void mouse_handler() //struct regs *a_r (not used but just there)
       break;
   }
 
-  puts("Got mouse", 150, 150);
-  puti(times++, 250,150);
+
 }
 
 

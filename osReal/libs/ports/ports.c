@@ -27,20 +27,20 @@ void ioWait()
 void outb(uint16_t port, uint8_t data)
 {
     asm volatile("outb %0, %1"
-                 : "=a"(data)
-                 : "d"(port));
+                 : 
+                 : "a"(data), "d"(port));
 }
 
 void outl(uint16_t port, uint32_t data)
 {
     asm volatile("outl %0, %1"
-                 : "=a"(data)
-                 : "d"(port));
+                :
+                 : "a"(data), "d"(port));
 }
 
 void outw(uint16_t port, uint32_t data)
 {
     asm volatile("out %0, %1"
-                 : "=a"(data)
-                 : "d"(port));
+                :
+                : "a"(data), "d"(port));
 }

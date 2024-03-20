@@ -2,22 +2,32 @@
 
 #include <stdint.h>
 #include "../ports/ports.h"
-#include "defs.h"
-#include "font.h"
 #include "../sys_lib/numbers.c"
+#include "define.h"
+#include "font.h"
 
 /// @brief Put pixel at (x,y) using 16 bit r:g:b/5:6:5 color
 /// @param col r:g:b/5:6:5 color
-static inline void SYS_put_pixel(uint16_t col, int x, int y)
+void SYS_put_pixel(uint16_t col, int x, int y)
 {
     VGARAM[x + y * SCREEN_WIDTH] = col;
 }
 
 /// @brief Put pixel at (x,y) using the system configuration for text color
-static void SYS_put_pixel_conf(int x, int y)
+void SYS_put_pixel_conf(int x, int y)
 {
     VGARAM[x + y * SCREEN_WIDTH] = SYS_vga_text_fmt.color_fg;
 }
+
+void set_vga_format()
+{
+    SYS_vga_text_fmt = (SYS_vga_text_fmt_t){
+        .char_spacing = 10,
+        .color_bg = 0,
+        .color_fg = (COL_RED_MAX << (6 + 5)) | (COL_GREEN_MAX << 5) | COL_BLUE_MAX
+    };
+}
+
 
 // from osdev
 /// @brief Put character using loaded font with a background color

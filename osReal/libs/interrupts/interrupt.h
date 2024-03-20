@@ -53,10 +53,6 @@ extern void exception_handler(struct regs32 regs) {
     putch('F',20,20);
     puti(isr_exception_type, 30, 20);
     nFails++;
-    if(isr_exception_type == 0)
-    {
-        PIC_sendEOI(0); // remove
-    }
 }
 
 extern void irq_handler(struct regs32 regs) {

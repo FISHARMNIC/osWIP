@@ -113,42 +113,6 @@ void enable_irq(unsigned char irq_num)
         outb(PORT_8259_IMR_S, pic_mask);
 }
 
-void IRQ_set_mask(unsigned char IRQline)
-{
-    uint16_t port;
-    uint8_t value;
-
-    if (IRQline < 8)
-    {
-        port = PIC1_DATA;
-    }
-    else
-    {
-        port = PIC2_DATA;
-        IRQline -= 8;
-    }
-    value = inb(port) | (1 << IRQline);
-    outb(port, value);
-}
-
-void IRQ_clear_mask(unsigned char IRQline)
-{
-    uint16_t port;
-    uint8_t value;
-
-    if (IRQline < 8)
-    {
-        port = PIC1_DATA;
-    }
-    else
-    {
-        port = PIC2_DATA;
-        IRQline -= 8;
-    }
-    value = inb(port) & ~(1 << IRQline);
-    outb(port, value);
-}
-
 void PIC_remap()
 {
     outb(PIC1_COMMAND, ICW1_INIT | ICW1_ICW4); // starts the initialization sequence (in cascade mode)
@@ -173,51 +137,3 @@ void PIC_remap()
     }
     */
 }
-
-
-// Function to add a delay to allow I/O operations to complete
-/*
-void PIC_init_old()
-{
-    outb(0x20, 0x11);
-    outb(0xA0, 0x11);
-    outb(0x21, 0x20);
-    outb(0xA1, 0x28);
-    outb(0x21, 0x04);
-    outb(0xA1, 0x02);
-
-    outb(0x21, 0x01);
-    outb(0xA1, 0x01);
-
-    outb(0x21, 0xff);
-    outb(0xA1, 0xff);
-}
-
-
-void PIC_init()
-{
-    // Initialize PIC 1
-    outb(PIC1_COMMAND, 0x11); // Start initialization sequence
-    ioWait();
-    outb(PIC1_DATA, 0x20); // Set base IRQ for PIC 1
-    ioWait();
-    outb(PIC1_DATA, 0x04); // Tell PIC 1 that there is a slave PIC at IRQ 2
-    ioWait();
-    outb(PIC1_DATA, 0x01); // Set 8086/88 (MCS-80/85) mode
-    ioWait();
-
-    // Initialize PIC 2
-    outb(PIC2_COMMAND, 0x11); // Start initialization sequence
-    ioWait();
-    outb(PIC2_DATA, 0x28); // Set base IRQ for PIC 2
-    ioWait();
-    outb(PIC2_DATA, 0x02); // Tell PIC 2 its cascade identity
-    ioWait();
-    outb(PIC2_DATA, 0x01); // Set 8086/88 (MCS-80/85) mode
-    ioWait();
-
-    // Clear all interrupt masks
-    outb(PIC1_DATA, 0x00);
-    outb(PIC2_DATA, 0x00);
-}
-*/
