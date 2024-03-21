@@ -42,9 +42,18 @@ static inline void tty_putString(char *string)
     tty_putString_ctx(string, &tty_current_ctx);
 }
 
-void tty_putInt_ctx(uint32_t number, tty_ctx_t *ctx)
+void tty_putInt_ctx(int32_t number, tty_ctx_t *ctx)
 {
-    int len = numLen(number) - 1;
+    int char_spacing = ctx->text_ctx.char_spacing;
+
+    if(number < 0)
+    {
+        number = -number;
+        tty_putChar('-');
+    }
+
+    int len = numLen((uint32_t)number) - 1;
+    ctx->current_x += len * char_spacing;
     if (number == 0) {
         tty_putChar('0');
     }
@@ -54,8 +63,10 @@ void tty_putInt_ctx(uint32_t number, tty_ctx_t *ctx)
         {
             tty_putChar((char)(number % 10) + 48);
             number /= 10;
+            ctx->current_x -= char_spacing * 2;
         }
     }
+    ctx->current_x += (len+2) * char_spacing;
 }
 
 static inline void tty_putInt(uint32_t number)

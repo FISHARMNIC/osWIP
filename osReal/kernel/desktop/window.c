@@ -28,8 +28,6 @@ void window_checkClick(int32_t click_x, int32_t click_y)
     while(current != 0)
     {
         window_t* window = (window_t*) current->item;
-        tty_putInt(123); // DRAWING BACKWARDS!
-        tty_putChar('-');
         if(
             click_x >= window->x && 
             click_y >= window->y && 
@@ -37,13 +35,14 @@ void window_checkClick(int32_t click_x, int32_t click_y)
             click_y <= (window->y + window->height)
         )
         {
-            int final = index;
+            final = index;
         }
         current = (linked_raw_t *) current->next;
         index++;
     }
-    if(final != -1)
+    if(final != -1 && final != (index - 1)) // if click on a window and its not the last window
     {
+        tty_putChar('-');
         linked_moveToEnd(&allWindows, final);
         window_renderAll();
     }
