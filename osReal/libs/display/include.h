@@ -35,7 +35,7 @@ tty_ctx_t tty_current_ctx;
 uint16_t *VGARAM = (uint16_t *)VGA_ADDRESS;
 
 #include "../ports/include.h"
-#include "../sys_lib/include.h"
+#include "../sys/include.h"
 #include "font.h"
 #include "pixel.c"
 #include "text.c"

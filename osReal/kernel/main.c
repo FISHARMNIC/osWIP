@@ -1,27 +1,32 @@
 #include <stdint.h>
 
+#include "../libs/sys/include.h"
+
 #include "../libs/display/include.h"
 #include "../libs/interrupts/include.h"
 #include "../libs/input/include.h"
+#include "../libs/disk/include.h"
+#include "desktop/include.h"
+
+uint16_t data[500] = {'A','B','C','D'};
 
 void kern_postBootSequence()
 {
-    gfx_init_ctx(&gfx_current_ctx, COL_RED_MAX, COL_GREEN_MAX, COL_BLUE_MAX);   // init current graphics context
-    tty_init_ctx(0,0,65,&gfx_current_ctx,&tty_current_ctx);                     // init current teletype context
+    gfx_init_ctx(&gfx_current_ctx, 0, COL_GREEN_MAX, 0);    // init current graphics context
+    tty_init_ctx(0,0,65,&gfx_current_ctx,&tty_current_ctx); // init current teletype context
     
-    tty_putString("Beginning post-boot\n");
+    tty_putString("==Finishing boot==\n");
 
     mouse_init();
-    tty_putInt(mouse_detect());
-    tty_putString(" :Mouse status\n");
+    tty_putString("... Mouse installed\n");
 
     timer_init(200);
 
     idt_load_stubs();                                       // load all idt stubs (defined in boot.s)
-    idt_load_interrupt(1, keyboard_handler);                // load custom interrupt
-    idt_load_interrupt(0, timer_callback);
-    idt_load_interrupt(12, mouse_handler);
-    tty_putString("...Interrupts ready\n");
+    idt_load_interrupt(IRQ_KEYBOARD, keyboard_handler);                // load custom interrupt
+    idt_load_interrupt(IRQ_TIMER, timer_callback);
+    idt_load_interrupt(IRQ_MOUSE, mouse_handler);
+    tty_putString("... Interrupts ready\n");
 
     pic_remap();                                            // move irq -> vector 32+
     
@@ -31,8 +36,10 @@ void kern_postBootSequence()
     pic_enable_irq(IRQ_MOUSE);
 
     enable_interrupts();                                    // asm sti
-    tty_putString("...Interrupts active\n");
-    tty_putString("==== Hit ENTER to load desktop ====\n");
+    tty_putString("... Interrupts active\n");
+
+    ata_send_identify();
+    tty_putString("==== Hit any key to load desktop ====\n");
 }
 
 void kernel_entry()
@@ -46,11 +53,11 @@ void kernel_entry()
     tty_putString("TEST2\n");
     tty_putString("TEST3\n");
     tty_putString("TEST4\n");
-    gfx_fillRect(150,150,200,200,&gfx_current_ctx);
+    gfx_fillRect(150,200,200,200,&gfx_current_ctx);
 
-    while(1){
-        tty_putChar(getch());
-    }
+    getch();
+    desktop_load();
+
 
     return;
 }

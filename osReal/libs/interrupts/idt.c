@@ -6,6 +6,7 @@ extern void exception_handler(struct regs32 regs) {
     gfx_drawChar('F',20,20);
     gfx_drawInt(isr_exception_type, 30, 20);
     nFails++;
+    //asm volatile("cli; jmp .;");
 }
 
 extern void irq_handler(struct regs32 regs) {
@@ -13,7 +14,7 @@ extern void irq_handler(struct regs32 regs) {
     //gfx_drawInt(irq, 300,300);
     if(idt_customs[irq] != 0)
     {
-        ((func*)(idt_customs[irq]))();
+        ((func_t*)(idt_customs[irq]))();
     }
     PIC_sendEOI(irq);
 }

@@ -1,6 +1,5 @@
-void gfx_fillRect(int x, int y, int width, int height, gfx_ctx_t* ctx)
+void gfx_fillRect_col(int x, int y, int width, int height, int color)
 {
-    int color = ctx->color_fg;
     uint16_t *addr = &VGARAM[x + y * SCREEN_WIDTH];
     int i, j;
  
@@ -10,6 +9,16 @@ void gfx_fillRect(int x, int y, int width, int height, gfx_ctx_t* ctx)
         }
         addr += SCREEN_WIDTH;
     }
+}
+
+static inline void gfx_fillRect(int x, int y, int width, int height, gfx_ctx_t* ctx)
+{
+    gfx_fillRect_col(x,y,width,height,ctx->color_fg);
+}
+
+static inline void gfx_clearRect(int x, int y, int width, int height)
+{
+    gfx_fillRect_col(x,y,width,height,0);
 }
 
 void gfx_getRect(int x, int y, int width, int height, uint16_t* saveBuffer)

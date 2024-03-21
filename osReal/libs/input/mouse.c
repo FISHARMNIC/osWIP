@@ -2,13 +2,33 @@
 static char mouse_cycle=0;    
 static uint8_t mouse_byte[3];
 static int32_t mouse_x=0;         
-static int32_t mouse_y=0;        
+static int32_t mouse_y=0;
+static uint8_t mouse_click = 0;        
 static uint16_t saveBuffer[CHAR_HEIGHT * CHAR_WIDTH];
+#define MOUSE_LEFT 1
+#define MOUSE_RIGHT 2
+
+static onClick_fn * mouse_clickFn = 0;
+
+void mouse_onClick(onClick_fn * fn)
+{
+  mouse_clickFn = fn;
+
+}
+
+static void mouse_handleClick(uint8_t data)
+{
+  mouse_click = data & 0b00000111;
+  if(mouse_clickFn != 0 && (mouse_click == 1 || mouse_click == 2))
+  {
+    mouse_clickFn(mouse_x, mouse_y);
+  }
+}
 
 static void mouse_render(int8_t dx, int8_t dy)
 {
   gfx_drawBuffer(mouse_x, mouse_y - 12, CHAR_WIDTH, CHAR_HEIGHT, saveBuffer);
-  gfx_drawBuffer(300, 300, CHAR_WIDTH, CHAR_HEIGHT, saveBuffer);
+  //gfx_drawBuffer(300, 300, CHAR_WIDTH, CHAR_HEIGHT, saveBuffer);
 
   mouse_x += dx;
   mouse_y -= dy;
@@ -23,6 +43,7 @@ void mouse_handler()
   {
     case 0:
       mouse_byte[0]=inb(0x60);
+      mouse_handleClick(mouse_byte[0]);
       mouse_cycle++;
       break;
     case 1:

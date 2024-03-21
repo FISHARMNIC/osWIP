@@ -34,3 +34,13 @@ void gfx_init_ctx(gfx_ctx_t* ctx, uint32_t red, uint32_t green, uint32_t blue)
         .color_fg = (red << (6 + 5)) | (green << 5) | blue
     };
 }
+
+gfx_ctx_t gfx_init_ctx_rtrn(uint32_t red, uint32_t green, uint32_t blue)
+{
+    return (gfx_ctx_t){
+        .char_spacing = CHAR_WIDTH + 2,
+        .line_spacing = CHAR_HEIGHT,
+        .color_bg = 0,
+        .color_fg = (red << (6 + 5)) | (green << 5) | blue
+    };
+}

@@ -5,5 +5,6 @@
 #define MOUSE_PORT KEYBOARD_PORT
 
 
+#include <stdint.h>
 
 #include "ports.c"

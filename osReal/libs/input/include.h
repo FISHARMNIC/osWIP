@@ -84,6 +84,8 @@ const char KEYSET[128] = "`^1234567890-=\b\tqwertyuiop[]\\ asdfghjkl;'\n  zxcvbn
 
 typedef void keyboard_fn(char);
 
+typedef void onClick_fn(int32_t, int32_t);
+
 #include "../ports/include.h"
 #include "keyboard.c"
 #include "mouse.c"

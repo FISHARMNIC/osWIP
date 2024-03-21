@@ -1,5 +1,3 @@
-#include <stdint.h>
-
 uint8_t inb(uint16_t port)
 {
     int8_t ret;

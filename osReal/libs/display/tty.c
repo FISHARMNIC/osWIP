@@ -62,3 +62,9 @@ static inline void tty_putInt(uint32_t number)
 {
     tty_putInt_ctx(number, &tty_current_ctx);
 }
+
+static inline void tty_putInt_nl(uint32_t number)
+{
+    tty_putInt_ctx(number, &tty_current_ctx);
+    tty_putChar_ctx('\n', &tty_current_ctx);
+}

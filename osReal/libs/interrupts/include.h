@@ -9,7 +9,7 @@ extern int _CODE_SEG;
 
 #define CODE_SEG (&gdt_code - &gdt_start)
 
-typedef void func(void);
+typedef void func_t(void);
 
 typedef struct {
 	uint16_t    isr_low;      // The lower 16 bits of the ISR's address

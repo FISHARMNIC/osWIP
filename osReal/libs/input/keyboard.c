@@ -1,4 +1,4 @@
-static volatile unsigned char keyboard_sc = 0; //must be volatile so that compiler doesn't cache in getch functions
+static volatile unsigned char keyboard_sc = 0; //must be volatile so that compiler doesn't cache in getch func_ttions
 
 void keyboard_handler()
 {
