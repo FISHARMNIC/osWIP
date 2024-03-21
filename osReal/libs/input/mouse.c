@@ -18,6 +18,7 @@ void mouse_onClick(onClick_fn * fn)
 
 static void mouse_handleClick(uint8_t data)
 {
+  //gfx_drawInt(data, 10, 10);
   mouse_click = data & 0b00000111;
   if(mouse_clickFn != 0 && (mouse_click == 1 || mouse_click == 2))
   {
