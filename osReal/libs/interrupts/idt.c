@@ -42,7 +42,7 @@ void idt_load_stubs() {
     idtr.base = (uint32_t)&idt[0];
     idtr.limit = (uint16_t)sizeof(idt_entry_t) * IDT_MAX_DESCRIPTORS - 1;
 
-    static uint8_t vectors[47];
+    //static uint8_t vectors[47];
     uint8_t vector = 0;
     for (; vector < 32; vector++) {
         idt_set_gate(vector, isr_stub_table[vector], 0x8E);

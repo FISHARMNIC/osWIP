@@ -1,10 +1,10 @@
 echo 1
 #assemble boot.s file
-limactl shell debian as --32 boot/boot.s -o bin/compiled/boot.o
+i386-elf-gcc -ffreestanding -c boot/boot.s -o bin/compiled/boot.o
 
 echo 2
 #compile kernel.c file
-if (i386-elf-gcc -ffreestanding -c kernel/main.c -o bin/compiled/kernel.o) ; then
+if (i386-elf-gcc -ffreestanding -Wall -c kernel/main.c -o bin/compiled/kernel.o) ; then
     echo 3
     #linking the kernel with kernel.o and boot.o files
     if (limactl shell debian ld -m elf_i386 -T boot/linker.ld bin/compiled/kernel.o bin/compiled/boot.o -o bin/compiled/MyOS.bin -nostdlib) ; then

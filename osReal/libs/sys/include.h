@@ -40,3 +40,4 @@ int numLen(unsigned x)
 #include "../display/include.h"
 #include "malloc.c"
 #include "linked.c"
+#include "strings.c"

@@ -1,6 +1,6 @@
 // very slow old program. rewrite later using linked list
 
-#define MAX_MEMORY 2000
+#define MAX_MEMORY 4000
 
 char malloc_memory[MAX_MEMORY];  // Let the compiler designate some static memory for us
 uint16_t malloc_start[MAX_MEMORY]; // Where our memory segments will start
@@ -26,7 +26,7 @@ void *malloc(uint16_t size)
 {
     uint16_t position;
     uint16_t free_chars_read = 0;
-    uint16_t whereInArr;
+    //uint16_t whereInArr;
 
     for (position = 0; position < MAX_MEMORY; position++)
     {

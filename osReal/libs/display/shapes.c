@@ -51,5 +51,5 @@ void gfx_drawBuffer(int x, int y, int width, int height, uint16_t* saveBuffer)
 
 static inline void gfx_drawMouse(int x, int y)
 {
-    gfx_drawInvertedTranparentChar(24, x, y);
+    gfx_drawInvertedTranparentGlyph(MOUSE_FONT, x, y); // old: 24
 }

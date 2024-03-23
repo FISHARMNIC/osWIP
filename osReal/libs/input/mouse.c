@@ -3,26 +3,37 @@ static char mouse_cycle=0;
 static uint8_t mouse_byte[3];
 static int32_t mouse_x=0;         
 static int32_t mouse_y=0;
-static uint8_t mouse_click = 0;        
+volatile uint8_t mouse_down = 0;        
 static uint16_t saveBuffer[CHAR_HEIGHT * CHAR_WIDTH];
 #define MOUSE_LEFT 1
 #define MOUSE_RIGHT 2
 
+static volatile int8_t mouse_edgeType = 0;
+
 static onClick_fn * mouse_clickFn = 0;
+static onMove_fn * mouse_moveFn = 0;
 
 void mouse_onClick(onClick_fn * fn)
 {
   mouse_clickFn = fn;
+}
 
+void mouse_onMove(onMove_fn * fn)
+{
+  mouse_moveFn = fn;
 }
 
 static void mouse_handleClick(uint8_t data)
 {
-  //gfx_drawInt(data, 10, 10);
-  mouse_click = data & 0b00000111;
-  if(mouse_clickFn != 0 && (mouse_click == 1 || mouse_click == 2))
+  mouse_down = data & 0b00000111;
+  if(mouse_clickFn != 0)
   {
-    mouse_clickFn(mouse_x, mouse_y);
+    if((mouse_edgeType == 0 && mouse_down > 0) || (mouse_edgeType == 1 && mouse_down == 0)) // clicked or falling action
+    {
+      mouse_edgeType = mouse_down > 0;
+      gfx_drawInt(mouse_edgeType, 10, 10);
+      mouse_clickFn(mouse_x, mouse_y, mouse_edgeType);
+    }
   }
 }
 
@@ -36,6 +47,15 @@ static void mouse_render(int8_t dx, int8_t dy)
 
   gfx_getRect(mouse_x, mouse_y - 12,CHAR_WIDTH,CHAR_HEIGHT, saveBuffer);
   gfx_drawMouse(mouse_x, mouse_y);
+}
+
+static void mouse_handleMove(int8_t dx, int8_t dy)
+{
+  mouse_render(dx, dy);
+  if(mouse_moveFn != 0)
+  {
+    mouse_moveFn(mouse_x, mouse_y);
+  }
 }
 
 void mouse_handler()
@@ -53,7 +73,7 @@ void mouse_handler()
       break;
     case 2:
       mouse_byte[2]=inb(0x60);
-      mouse_render((int8_t) mouse_byte[1], (int8_t) mouse_byte[2]);
+      mouse_handleMove((int8_t) mouse_byte[1], (int8_t) mouse_byte[2]);
       mouse_cycle=0;
       break;
   }

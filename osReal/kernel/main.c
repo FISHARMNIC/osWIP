@@ -1,3 +1,9 @@
+/*
+todo: 
+setup vblank interrupt and double buffering
+*/
+
+
 #include <stdint.h>
 
 #include "../libs/sys/include.h"
@@ -57,7 +63,6 @@ void kernel_entry()
 
     getch();
     desktop_load();
-
 
     return;
 }

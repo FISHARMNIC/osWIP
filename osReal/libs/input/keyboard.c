@@ -15,7 +15,7 @@ char getKeyCode()
 
 char getch()
 {
-  return KEYSET[getKeyCode()];
+  return KEYSET[(int) getKeyCode()];
 }
 
 int gets(char* buffer)
