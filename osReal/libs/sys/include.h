@@ -1,6 +1,6 @@
 #pragma once
 
-int numLen(unsigned x)
+int numLen(int32_t x)
 {
     // this is either a fun exercise in optimization
     // or it's extremely premature optimization.

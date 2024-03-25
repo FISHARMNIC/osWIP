@@ -26,7 +26,7 @@ static inline void gfx_drawPixel(int x, int y)
 
 static inline void gfx_drawInvertedPixel(int x, int y)
 {
-    ((uint16_t*)VGA_ADDRESS)[x + y * SCREEN_WIDTH] = ~(((uint16_t*)VGA_ADDRESS)[x + y * SCREEN_WIDTH]);
+    VGARAM[x + y * SCREEN_WIDTH] = ~VGARAM[x + y * SCREEN_WIDTH];
 }
 
 /// @brief Initiate a context
@@ -45,7 +45,7 @@ gfx_ctx_t gfx_init_ctx_rtrn(uint32_t red, uint32_t green, uint32_t blue)
     return (gfx_ctx_t){
         .char_spacing = CHAR_WIDTH + 2,
         .line_spacing = CHAR_HEIGHT,
-        .color_bg = 0,
+        .color_bg = FORMAT_COLOR(red,green,blue),
         .color_fg = FORMAT_COLOR(red,green,blue)
     };
 }
@@ -55,7 +55,7 @@ gfx_ctx_t gfx_init_ctx_rgb_rtrn(uint32_t rgb)
     return (gfx_ctx_t){
         .char_spacing = CHAR_WIDTH + 2,
         .line_spacing = CHAR_HEIGHT,
-        .color_bg = 0,
+        .color_bg = rgb,
         .color_fg = rgb
     };
 }

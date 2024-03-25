@@ -1,12 +1,9 @@
-int nFails = 0;
-// todo, bluescreen
 extern void exception_handler(struct regs32 regs) {
-    gfx_drawString("000", 30,20);
-    gfx_drawInt(nFails,20,40);
-    gfx_drawChar('F',20,20);
+    gfx_db_end();
+    gfx_fillRect_col(0,0, SCREEN_WIDTH, SCREEN_HEIGHT, FORMAT_COLOR(0, 0, COL_BLUE_MAX));
+    gfx_drawString("CRITICAL FAULT",20,20);
     gfx_drawInt(isr_exception_type, 30, 20);
-    nFails++;
-    //asm volatile("cli; jmp .;");
+    asm volatile("cli; jmp .;");
 }
 
 extern void irq_handler(struct regs32 regs) {

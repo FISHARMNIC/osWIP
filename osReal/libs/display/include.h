@@ -17,7 +17,8 @@
 #define COL_GREEN_MAX 63
 #define FORMAT_COLOR(r,g,b) (((r) << (6 + 5)) | ((g) << 5) | (b))
 
-#define COLOR_GRAY(amount) FORMAT_COLOR(COL_RED_MAX - amount, COL_GREEN_MAX - amount, COL_BLUE_MAX - amount)
+#define COLOR_ENV_GREEN(amount) FORMAT_COLOR(COL_RED_MAX - amount, COL_GREEN_MAX - amount, COL_BLUE_MAX - amount)
+#define COLOR_GRAY(amount) FORMAT_COLOR(COL_RED_MAX - amount, COL_GREEN_MAX - (amount*2), COL_BLUE_MAX - amount)
 #define COLOR_WHITE COLOR_GRAY(0)
 
 typedef struct {

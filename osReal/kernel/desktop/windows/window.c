@@ -11,10 +11,12 @@ static volatile uint8_t windowIsSelected = 0;
 
 void window_draw(window_t *window)
 {
-    gfx_fillRect_col(window->x, window->y, window->width, WINDOW_BAR_HEIGHT, COLOR_GRAY(2)); // bar
-    gfx_drawString_ctx("- + x", window->x + window->width - 60, window->y, (gfx_ctx_t *)&GFX_DEFAULT_BLACK);
-    gfx_drawString_ctx(window->title, window->x, window->y, (gfx_ctx_t *)&GFX_DEFAULT_BLACK);
-    gfx_fillRect(window->x, window->y + WINDOW_BAR_HEIGHT, window->width, window->height, &window->window_ctx);
+    gfx_fillBorderedRect_col(window->x, window->y, window->width, WINDOW_BAR_HEIGHT, wasClicked_ptr == window ? COLOR_WHITE : COLOR_ENV_GREEN(5), 0, 1); // bar
+    gfx_drawTransparentString_ctx("- + X", window->x + window->width - 60, window->y, (gfx_ctx_t *)&GFX_DEFAULT_BLACK); // tools
+    gfx_drawTransparentString_ctx(window->title, window->x + 5, window->y, (gfx_ctx_t *)&GFX_DEFAULT_BLACK);    // title
+    gfx_fillBorderedRect_col(window->x, window->y + WINDOW_BAR_HEIGHT, window->width, window->height, window->window_ctx.color_fg, 0, 1); // window
+    // change this to unfilled rect
+
     widget_drawAll(window);
 }
 
@@ -53,7 +55,7 @@ window_t* window_create(uint32_t x, uint32_t y, uint32_t width, uint32_t height,
         .height = height,
         .title = title,
         .event = (void *)event,
-        .window_ctx = gfx_init_ctx_rgb_rtrn(COLOR_GRAY(10)),
+        .window_ctx = gfx_init_ctx_rgb_rtrn(COLOR_ENV_GREEN(10)),
     };
     linked_add(&allWindows, (void *)window);
     return window;
@@ -142,5 +144,4 @@ void window_checkClick(int32_t click_x, int32_t click_y, int8_t type)
     {
         windowIsSelected = 0;
     }
-    gfx_drawInt(wasClicked_taskb, 10, 30);
 }

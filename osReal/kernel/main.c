@@ -1,6 +1,5 @@
 /*
-todo: 
-setup vblank interrupt and double buffering
+CLICKING IN THE GREEN TEXT AREA FIXES ISSUE
 */
 
 
@@ -46,6 +45,20 @@ void kern_postBootSequence()
 
     ata_send_identify();
     tty_putString("==== Hit any key to load desktop ====\n");
+
+    mouse_render(0,0);
+}
+
+void run_disk_test()
+{
+    gfx_clearRect(0, 0, SCREEN_WIDTH, SCREEN_HEIGHT);
+    gfx_init_ctx(&gfx_current_ctx, COL_RED_MAX, COL_GREEN_MAX, COL_BLUE_MAX);
+    tty_init_ctx(0, 0, 65, &gfx_current_ctx, &tty_current_ctx);
+
+    tty_putString("RUNNING DISK TEST-\n");
+    uint16_t buffer[256];
+    ata_read_sector(buffer, 0);
+
 }
 
 void kernel_entry()
@@ -62,7 +75,10 @@ void kernel_entry()
     gfx_fillRect(150,200,200,200,&gfx_current_ctx);
 
     getch();
-    desktop_load();
+
+    run_disk_test();
+
+    //desktop_load();
 
     return;
 }

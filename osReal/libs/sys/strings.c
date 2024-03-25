@@ -6,7 +6,7 @@ void itoa(int32_t number, char* buff)
         *(buff++) = '-';
     }
 
-    int len = numLen((uint32_t)number) - 1;
+    int len = numLen(number) - 1;
     buff += len + 1;
     *(buff--) = 0;
 
