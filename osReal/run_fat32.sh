@@ -5,7 +5,9 @@ set -e
 ./comp2.sh
 
 echo "********************COPYING DISK********************"
+
 rm bin/compiled/disk.img
+
 
 dd if=/dev/zero of=bin/compiled/disk.img bs=512 count=131072
 dd if=bin/compiled/kernel.o of=bin/compiled/disk.img bs=512 seek=0 conv=notrunc
@@ -36,7 +38,7 @@ echo "Loop device 2: $loop_device2"
 
 echo "********************CREATING FS********************"
 
-limactl shell debian sudo mkdosfs -F32 -f 2 -S 512 -s 1 "$loop_device2"
+limactl shell debian sudo mkdosfs -F32 -f 2 "$loop_device2"
 
 echo "********************MOUTING AND INSTALLING********************"
 

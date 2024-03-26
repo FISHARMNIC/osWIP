@@ -1,10 +1,13 @@
+char sector_count = 1;
+uint16_t ata_idenfity_buffer[256];
+
 void print_bin(char a)
 {
     for (int i = 0; i < 8; i++)
         tty_putInt((int)(!!((a << i) & 0x80)));
 }
 
-void ata_send_identify()
+void ata_send_identify(uint16_t *ptr)
 {
     /*
     1. select a target drive by sending 0xA0 to the "drive select" IO port => 0x1F6.
@@ -47,26 +50,44 @@ void ata_send_identify()
         tty_putString("\nUnsupported drive format");
     }
 
-    tty_putString("-- Waiting DRQ\n");
-
+    ATA_WAIT_DRQ();
+    if(inb(0x1F7) & STATUS_ERR)
+    {
+        tty_putString("... IDENT failiure\n");
+    } else {
     tty_putString("... IDENT succesful\n");
-}
-
-void ata_read_sector(uint16_t *ptr, uint32_t LBA)
-{
-    outb(0x1F6, 0xE0 | ((LBA >> 24) & 0xF));
-    outb(0x1F2, sector_count);
-    outb(0x1F3, (char)LBA);
-    outb(0x1F4, (char)(LBA >> 8));
-    outb(0x1F5, (char)(LBA >> 16));
-    outb(0x1F7, 0x20); // Read
+    }
 
     int i = 0;
     while (i++ < 256)
     {
-        ATA_WAIT_BSY();
-        ATA_WAIT_DRQ();
         *ptr = inw(0x1F0);
+        ptr++;
+    }
+}
+
+void ata_read_sector(uint16_t *ptr, uint32_t LBA)
+{
+    outb(0x1F6, 0xA0);
+
+    ATA_WAIT_RDY();
+
+    outb(0x1f6, 0xE0); //outb(0x1F6, 0xE0 | ((LBA >> 24) & 0xF));
+    outb(0x1F2, sector_count);
+    outb(0x1F3, (unsigned char)LBA);
+    outb(0x1F4, (unsigned char)(LBA >> 8));
+    outb(0x1F5, (unsigned char)(LBA >> 16));
+    outb(0x1F7, 0x20); // Read
+
+    int i = 0;
+
+    ATA_WAIT_BSY();
+    ATA_WAIT_DRQ();
+
+    while (i++ < 256)
+    {
+        *ptr = inw(0x1F0);
+        tty_putInt((uint32_t) *ptr);
         ptr++;
     }
 }
@@ -91,5 +112,3 @@ void ata_write_sector(uint16_t *src, uint32_t LBA)
         NOP_DELAY(100);
     }
 }
-
-char sector_count = 1;

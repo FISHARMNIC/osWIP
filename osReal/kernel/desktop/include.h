@@ -1,7 +1,7 @@
 #pragma once
 
 #define WINDOW_BAR_HEIGHT 20
-
+#define WINDOW_RESIZE_AREA 10
 typedef struct
 {
     uint32_t x;

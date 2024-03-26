@@ -2,6 +2,7 @@ void gfx_fillRect_col(int x, int y, int width, int height, int color)
 {
     uint16_t *addr = &VGARAM[x + y * SCREEN_WIDTH];
     int i, j;
+    //height -= y + SCREEN_HEIGHT - height ;
  
     for (i = 0; i < height; i++) {
         for (j = 0; j < width; j++) {
@@ -74,8 +75,8 @@ void gfx_drawBuffer(int x, int y, int width, int height, uint16_t* saveBuffer)
 }
 
 
-
+uint8_t* gfx_mouse_current_glpyh = MOUSE_FONT_REG;
 static inline void gfx_drawMouse(int x, int y)
 {
-    gfx_drawInvertedTranparentGlyph(MOUSE_FONT, x, y); // old: 24
+    gfx_drawInvertedTranparentGlyph(gfx_mouse_current_glpyh, x, y); // old: 24
 }

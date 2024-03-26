@@ -23,6 +23,7 @@ void kern_postBootSequence()
     tty_putString("==Finishing boot==\n");
 
     mouse_init();
+    gfx_mouse_current_glpyh = MOUSE_FONT_REG;
     tty_putString("... Mouse installed\n");
 
     timer_init(200);
@@ -43,12 +44,14 @@ void kern_postBootSequence()
     enable_interrupts();                                    // asm sti
     tty_putString("... Interrupts active\n");
 
-    ata_send_identify();
+    //ata_send_identify(ata_idenfity_buffer);
     tty_putString("==== Hit any key to load desktop ====\n");
 
     mouse_render(0,0);
 }
 
+
+// look into Interesting information returned by IDENTIFY on ATA PIO osdev
 void run_disk_test()
 {
     gfx_clearRect(0, 0, SCREEN_WIDTH, SCREEN_HEIGHT);
@@ -56,9 +59,14 @@ void run_disk_test()
     tty_init_ctx(0, 0, 65, &gfx_current_ctx, &tty_current_ctx);
 
     tty_putString("RUNNING DISK TEST-\n");
+    
     uint16_t buffer[256];
     ata_read_sector(buffer, 0);
 
+    mbr_t* bootRecord = (mbr_t* )buffer;
+    tty_putString(bootRecord->BS_OEMName);
+    tty_putInt_nl((int) bootRecord->BPB_BytsPerSec);
+    tty_putInt_nl((int) bootRecord->BPB_SecPerClus);
 }
 
 void kernel_entry()
@@ -76,9 +84,9 @@ void kernel_entry()
 
     getch();
 
-    run_disk_test();
+    //run_disk_test();
 
-    //desktop_load();
+    desktop_load();
 
     return;
 }
