@@ -1,22 +1,21 @@
 static linked_t allWindows; // todo: malloc
 
-// awful, make this a struct
-static window_t *wasClicked_ptr = 0;
-static uint32_t wasClicked_x = 0;
-static uint32_t wasClicked_y = 0;
-static uint32_t wasClicked_outOfBar = 0;
-static uint32_t wasClicked_resize = 0;
-static window_t wasClicked_win;
+static window_selected_t wasClicked;
 
 static volatile uint8_t windowIsSelected = 0;
 
 void window_draw(window_t *window)
 {
-    gfx_fillBorderedRect_col(window->x, window->y, window->width, WINDOW_BAR_HEIGHT, wasClicked_ptr == window ? COLOR_WHITE : COLOR_ENV_GREEN(5), 0, 1); // bar
-    gfx_drawTransparentString_ctx("- + X", window->x + window->width - 60, window->y, (gfx_ctx_t *)&GFX_DEFAULT_BLACK);                                  // tools
-    gfx_drawTransparentString_ctx(window->title, window->x + 5, window->y, (gfx_ctx_t *)&GFX_DEFAULT_BLACK);                                             // title
-    gfx_fillBorderedRect_col(window->x, window->y + WINDOW_BAR_HEIGHT, window->width, window->height, window->window_ctx.color_fg, 0, 1);                // window
-    gfx_fillBorderedRect_col(window->x + window->width - WINDOW_RESIZE_AREA, window->y + WINDOW_BAR_HEIGHT + window->height - WINDOW_RESIZE_AREA, WINDOW_RESIZE_AREA, WINDOW_RESIZE_AREA, COLOR_GRAY(10), 0, 1);         // re-size
+    uint32_t x = window->x;
+    uint32_t y = window->y;
+    uint32_t width = window->width;
+    uint32_t height = window->height;
+
+    gfx_fillBorderedRect_col(x, y, width, WINDOW_BAR_HEIGHT, wasClicked.ptr == window ? COLOR_WHITE : COLOR_ENV_GREEN(5), 0, 1); // bar
+    gfx_drawTransparentString_ctx("- + X", x + width - 60, y, (gfx_ctx_t *)&GFX_DEFAULT_BLACK);                                  // tools
+    gfx_drawTransparentString_ctx(window->title, x + 5, y, (gfx_ctx_t *)&GFX_DEFAULT_BLACK);                                     // title
+    gfx_fillBorderedRect_col(x, y + WINDOW_BAR_HEIGHT - 1, width, height, window->window_ctx.color_fg, 0, 1);                        // window
+    gfx_fillBorderedRect_col(x + width - WINDOW_RESIZE_AREA, y + WINDOW_BAR_HEIGHT + height - WINDOW_RESIZE_AREA - 1, WINDOW_RESIZE_AREA, WINDOW_RESIZE_AREA, COLOR_GRAY(10), 0, 1);         // re-size square
 
     widget_drawAll(window);
 }
@@ -38,11 +37,21 @@ void window_render(window_t *window)
 void window_renderAll()
 {
     linked_t current = allWindows;
-    while (current != 0)
+    if(current == 0) 
+    {
+        taskbar_render();
+        gfx_db_swap();
+        return;
+    }
+
+    while (current->next != 0)
     {
         window_render((window_t *)current->item);
         current = (linked_t)current->next;
     }
+
+    taskbar_render();
+    window_render((window_t *)current->item);
     gfx_db_swap();
 }
 
@@ -67,19 +76,19 @@ void window_checkMove(int32_t mouse_x, int32_t mouse_y)
     gfx_mouse_current_glpyh = MOUSE_FONT_REG;
     if (windowIsSelected)
     {
-        if (mouse_x != wasClicked_x || mouse_y != wasClicked_y)
+        if (mouse_x != wasClicked.x || mouse_y != wasClicked.y)
         {
-            gfx_clearRect(wasClicked_ptr->x, wasClicked_ptr->y, wasClicked_ptr->width, wasClicked_ptr->height + WINDOW_BAR_HEIGHT);
-            if(!wasClicked_outOfBar)
+            gfx_fillRect_col(wasClicked.ptr->x, wasClicked.ptr->y, wasClicked.ptr->width, wasClicked.ptr->height + WINDOW_BAR_HEIGHT, desktop_background_color);
+            if(!wasClicked.outOfBar)
             {
-                wasClicked_ptr->x = wasClicked_win.x + (mouse_x - wasClicked_x);
-                wasClicked_ptr->y = wasClicked_win.y + (mouse_y - wasClicked_y);
+                wasClicked.ptr->x = wasClicked.win.x + (mouse_x - wasClicked.x);
+                wasClicked.ptr->y = wasClicked.win.y + (mouse_y - wasClicked.y);
             }
-            else if (wasClicked_resize)
+            else if (wasClicked.resize)
             {
                 gfx_mouse_current_glpyh = MOUSE_FONT_SIZE;
-                wasClicked_ptr->width = wasClicked_win.width + (mouse_x - wasClicked_x);
-                wasClicked_ptr->height = wasClicked_win.height + (mouse_y - wasClicked_y);
+                wasClicked.ptr->width = wasClicked.win.width + (mouse_x - wasClicked.x);
+                wasClicked.ptr->height = wasClicked.win.height + (mouse_y - wasClicked.y);
             }
         }
         window_renderAll();
@@ -109,7 +118,7 @@ void window_checkClick(int32_t click_x, int32_t click_y, int8_t type)
                     if (click_x > window->x + window->width - 60)
                     {
                         windowIsSelected = 0;
-                        gfx_clearRect(window->x, window->y, window->width, window->height + WINDOW_BAR_HEIGHT);
+                        gfx_fillRect_col(window->x, window->y, window->width, window->height + WINDOW_BAR_HEIGHT, desktop_background_color);
                         linked_remove(&allWindows, final);
                         window_renderAll();
                         return;
@@ -127,15 +136,18 @@ void window_checkClick(int32_t click_x, int32_t click_y, int8_t type)
             }
             window = (window_t *)(linked_read_link(allWindows, -1)->item);
 
-            wasClicked_outOfBar = click_y > (window->y + WINDOW_BAR_HEIGHT);
-            wasClicked_resize = click_x > (window->x + window->width - WINDOW_RESIZE_AREA) && click_y > (window->y + window->height + WINDOW_BAR_HEIGHT - WINDOW_RESIZE_AREA);
-            wasClicked_x = click_x;
-            wasClicked_y = click_y;
-            wasClicked_ptr = window;
-            wasClicked_win = *window;
+            wasClicked = (window_selected_t){
+                .outOfBar = click_y > (window->y + WINDOW_BAR_HEIGHT),
+                .resize = click_x > (window->x + window->width - WINDOW_RESIZE_AREA) && click_y > (window->y + window->height + WINDOW_BAR_HEIGHT - WINDOW_RESIZE_AREA),
+                .x = click_x,
+                .y = click_y,
+                .ptr = window,
+                .win = *window,
+            };
+
             windowIsSelected = 1;
-            
-            if (final == index - 1 && wasClicked_outOfBar)
+
+            if (final == index - 1 && wasClicked.outOfBar)
             {
                 if (window->event != 0)
                 {

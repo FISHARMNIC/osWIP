@@ -27,12 +27,13 @@ void gfx_fillBorderedRect_col(int x, int y, int width, int height, int color, in
     uint16_t *addr = &VGARAM[x + y * SCREEN_WIDTH];
     int i, j;
  
-    for (j = 0; j < width - 1; j++) {
+    for (j = 0; j < width; j++) {
         addr[j] = borderColor; 
     }
+
     addr += SCREEN_WIDTH;
 
-    for (i = 1; i < height; i++) {
+    for (i = 1; i < height - 1; i++) {
         *addr = borderColor;  
         for (j = 1; j < width - 1; j++) {
             addr[j] = color; 
@@ -41,7 +42,7 @@ void gfx_fillBorderedRect_col(int x, int y, int width, int height, int color, in
         addr += SCREEN_WIDTH;
     }
 
-    for (j = 0; j < width - 1; j++) {
+    for (j = 0; j < width; j++) {
         addr[j] = borderColor; 
     }
 }

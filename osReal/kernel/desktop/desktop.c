@@ -36,13 +36,14 @@ void desktop_example()
 
 void desktop_load()
 {
-    gfx_clearRect(0, 0, SCREEN_WIDTH, SCREEN_HEIGHT);
     gfx_init_ctx(&gfx_current_ctx, COL_RED_MAX, COL_GREEN_MAX, COL_BLUE_MAX);
     tty_init_ctx(0, 0, 65, &gfx_current_ctx, &tty_current_ctx);
 
     desktop_example();
 
     gfx_db_begin();
+    gfx_fillRect_col(0, 0, SCREEN_WIDTH, SCREEN_HEIGHT, desktop_background_color);
+    
     mouse_onClick(window_checkClick);
     mouse_onMove(window_checkMove);
     window_renderAll();

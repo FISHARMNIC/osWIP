@@ -60,13 +60,21 @@ void run_disk_test()
 
     tty_putString("RUNNING DISK TEST-\n");
     
-    uint16_t buffer[256];
-    ata_read_sector(buffer, 0);
+    uint8_t buffer[512];
+    // Volume sector 0, located at 1MB (in fat_32)
+    ata_read_sector_u8(buffer, 2048);
 
-    mbr_t* bootRecord = (mbr_t* )buffer;
-    tty_putString(bootRecord->BS_OEMName);
-    tty_putInt_nl((int) bootRecord->BPB_BytsPerSec);
-    tty_putInt_nl((int) bootRecord->BPB_SecPerClus);
+    bpb_t* bootRecord = (bpb_t* )(buffer);
+    tty_putString_nl(bootRecord->BS_OEMName);
+    tty_putInt_nl((uint32_t) bootRecord->BPB_BytsPerSec);
+    tty_putInt_nl((uint32_t) bootRecord->BPB_SecPerClus);
+    tty_putInt_nl((uint32_t) bootRecord->BPB_RsvdSecCnt); // should be 32
+    tty_putInt_nl((uint32_t) bootRecord->BPB_NumFATs); // should be 2
+    tty_putInt_nl((uint32_t) bootRecord->BPB_RootEntCnt); // should be 0
+    tty_putInt_nl((uint32_t) bootRecord->BPB_TotSec32);
+
+    //tty_putInt_nl((int) buffer[255] & 0xFF);
+    //tty_putInt_nl((int) buffer[255] >> 8 );
 }
 
 void kernel_entry()
@@ -84,9 +92,9 @@ void kernel_entry()
 
     getch();
 
-    //run_disk_test();
+    run_disk_test();
 
-    desktop_load();
+    //desktop_load();
 
     return;
 }

@@ -27,8 +27,22 @@ typedef struct
     uint32_t type;
 } window_event_t;
 
+typedef struct
+{
+    window_t *ptr;
+    window_t win;
+    uint32_t x;
+    uint32_t y;
+    uint32_t outOfBar;
+    uint32_t resize;
+} window_selected_t;
+
 typedef void window_event_fn(window_event_t*);
 
+uint16_t desktop_background_color = FORMAT_COLOR(25, 37, 17);
+
+#include "taskbar/include.h"
 #include "widgets/include.h"
 #include "windows/window.c"
+
 #include "desktop.c"

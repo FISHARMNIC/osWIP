@@ -17,17 +17,18 @@
 
 // offset table https://wiki.osdev.org/FAT#FAT_32 -> imp. details, BPB
 // also from fatgen103.pdf
+// Note, the bpb is located at the first sector of the VOLUME, not the disk. -> the first sector formatted with FAT
 #define SIZE_BYTES(bits) bits * 4
 typedef struct
 {
     char BS_jmpBoot[3];
     char BS_OEMName[8];
-    uint16_t BPB_BytsPerSec;
-    uint8_t BPB_SecPerClus;
-    uint16_t BPB_RsvdSecCnt;
-    uint8_t BPB_NumFATs;
-    uint16_t BPB_RootEntCnt;
-    uint16_t BPB_TotSec16;
+    uint16_t BPB_BytsPerSec; // should be: 512
+    uint8_t BPB_SecPerClus;  // should be: 1
+    uint16_t BPB_RsvdSecCnt; // should be: 32
+    uint8_t BPB_NumFATs;     // should be: 2
+    uint16_t BPB_RootEntCnt; // should be: 0
+    uint16_t BPB_TotSec16;   // should be: 0 (uses TotSec32 instead)
     uint8_t BPB_Media;
     uint16_t BPB_FATSz16;
     uint16_t BPB_SecPerTrk;
@@ -47,7 +48,7 @@ typedef struct
     uint32_t BS_VolID;
     char BS_VolLab[11];
     char BS_FilSysType[8];
-} mbr_t;
+} __attribute__((packed)) bpb_t;
 
 
 #include "ata.c"

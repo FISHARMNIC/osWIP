@@ -66,9 +66,9 @@ void ata_send_identify(uint16_t *ptr)
     }
 }
 
-void ata_read_sector(uint16_t *ptr, uint32_t LBA)
+void ata_read_sector(uint16_t *arr, uint32_t LBA)
 {
-    outb(0x1F6, 0xA0);
+    outb(0x1F6, 0xE0 | ((LBA >> 24) & 0xF));
 
     ATA_WAIT_RDY();
 
@@ -79,16 +79,43 @@ void ata_read_sector(uint16_t *ptr, uint32_t LBA)
     outb(0x1F5, (unsigned char)(LBA >> 16));
     outb(0x1F7, 0x20); // Read
 
+    ATA_WAIT_BSY();
+    ATA_WAIT_DRQ();
+
     int i = 0;
+    while (i < 256)
+    {
+        arr[i] = inw(0x1F0);
+        // tty_putChar((char)(arr[i] & 0xFF));
+        // tty_putChar(' ');
+        // tty_putChar((char)(arr[i] >> 8));
+        // tty_putChar(' ');
+        i++;
+    }
+}
+
+void ata_read_sector_u8(uint8_t *arr, uint32_t LBA)
+{
+    outb(0x1F6, 0xE0 | ((LBA >> 24) & 0xF));
+
+    ATA_WAIT_RDY();
+
+    outb(0x1f6, 0xE0); //outb(0x1F6, 0xE0 | ((LBA >> 24) & 0xF));
+    outb(0x1F2, sector_count);
+    outb(0x1F3, (unsigned char)LBA);
+    outb(0x1F4, (unsigned char)(LBA >> 8));
+    outb(0x1F5, (unsigned char)(LBA >> 16));
+    outb(0x1F7, 0x20); // Read
 
     ATA_WAIT_BSY();
     ATA_WAIT_DRQ();
 
-    while (i++ < 256)
+    int i = 0;
+    while (i < 512)
     {
-        *ptr = inw(0x1F0);
-        tty_putInt((uint32_t) *ptr);
-        ptr++;
+        uint16_t in = inw(0x1F0);
+        arr[i++] = in & 0xFF;
+        arr[i++] = in >> 8;
     }
 }
 
@@ -104,11 +131,12 @@ void ata_write_sector(uint16_t *src, uint32_t LBA)
     outb(0x1F7, 0x30);
     
     int i = 0;
-    while (i++ < 256)
+    while (i < 256)
     {
         ATA_WAIT_BSY();
         ATA_WAIT_DRQ();
         outl(0x1F0, src[i]);
         NOP_DELAY(100);
+        i++;
     }
 }
