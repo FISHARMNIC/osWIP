@@ -49,6 +49,7 @@ typedef struct {
     int current_x;
     int current_y;
     int cols;
+    int rows;
     gfx_ctx_t text_ctx;
 } tty_ctx_t;
 

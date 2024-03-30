@@ -13,7 +13,7 @@ CLICKING IN THE GREEN TEXT AREA FIXES ISSUE
 #include "../libs/disk/include.h"
 #include "desktop/include.h"
 
-uint16_t data[500] = {'A','B','C','D'};
+//uint16_t data[500] = {'A','B','C','D'};
 
 void kern_postBootSequence()
 {
@@ -48,33 +48,6 @@ void kern_postBootSequence()
     tty_putString("==== Hit any key to load desktop ====\n");
 
     mouse_render(0,0);
-}
-
-
-// look into Interesting information returned by IDENTIFY on ATA PIO osdev
-void run_disk_test()
-{
-    gfx_clearRect(0, 0, SCREEN_WIDTH, SCREEN_HEIGHT);
-    gfx_init_ctx(&gfx_current_ctx, COL_RED_MAX, COL_GREEN_MAX, COL_BLUE_MAX);
-    tty_init_ctx(0, 0, 65, &gfx_current_ctx, &tty_current_ctx);
-
-    tty_putString("RUNNING DISK TEST-\n");
-    
-    uint8_t buffer[512];
-    // Volume sector 0, located at 1MB (in fat_32)
-    ata_read_sector_u8(buffer, 2048);
-
-    bpb_t* bootRecord = (bpb_t* )(buffer);
-    tty_putString_nl(bootRecord->BS_OEMName);
-    tty_putInt_nl((uint32_t) bootRecord->BPB_BytsPerSec);
-    tty_putInt_nl((uint32_t) bootRecord->BPB_SecPerClus);
-    tty_putInt_nl((uint32_t) bootRecord->BPB_RsvdSecCnt); // should be 32
-    tty_putInt_nl((uint32_t) bootRecord->BPB_NumFATs); // should be 2
-    tty_putInt_nl((uint32_t) bootRecord->BPB_RootEntCnt); // should be 0
-    tty_putInt_nl((uint32_t) bootRecord->BPB_TotSec32);
-
-    //tty_putInt_nl((int) buffer[255] & 0xFF);
-    //tty_putInt_nl((int) buffer[255] >> 8 );
 }
 
 void kernel_entry()

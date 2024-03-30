@@ -18,27 +18,26 @@ void pic_acknowledge(unsigned int interrupt)
 
 void PIC_sendEOI(unsigned char irq)
 {
-    if (irq >= 8) // second EOI to cascaded PIC
+    if (irq >= 8) {
         outb(PIC2_COMMAND, PIC_EOI);
+    }
     outb(PIC1_COMMAND, PIC_EOI);
 }
 
+// disable and enable are not my code
 void pic_disable_irq(unsigned char irq_num)
 {
     unsigned char irq_bit, pic_mask;
 
-    // read the current mask
     if (irq_num <= 7)
         pic_mask = inb(PIC1_DATA);
     else
         pic_mask = inb(PIC2_DATA);
 
-    // set the apropriate bit 1 - disable 0 enable
     irq_bit = 1 << (irq_num % 8);
 
     pic_mask = irq_bit | pic_mask;
 
-    // write to pic controler
     if (irq_num <= 7)
         outb(PIC1_DATA, pic_mask);
     else
@@ -49,18 +48,15 @@ void pic_enable_irq(unsigned char irq_num)
 {
     unsigned char irq_bit, pic_mask;
 
-    // read the current mask
     if (irq_num <= 7)
         pic_mask = inb(PIC1_DATA);
     else
         pic_mask = inb(PIC2_DATA);
 
-    // clear the apropriate bit
     irq_bit = ~(1 << (irq_num % 8));
 
     pic_mask = irq_bit & pic_mask;
 
-    // write to pic controler
     if (irq_num <= 7)
         outb(PIC1_DATA, pic_mask);
     else
@@ -69,7 +65,7 @@ void pic_enable_irq(unsigned char irq_num)
 
 void pic_remap()
 {
-    outb(PIC1_COMMAND, 0x11); // starts the initialization sequence (in cascade mode)
+    outb(PIC1_COMMAND, 0x11);
     outb(PIC2_COMMAND, 0x11);
 
     outb(PIC1_DATA, 0x20);

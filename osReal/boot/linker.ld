@@ -1,10 +1,11 @@
 /* entry point of our kernel */
 ENTRY(_start)
+OUTPUT_FORMAT(elf32-i386)
 
 SECTIONS
 {
 	/* we need 1MB of space atleast */
-	. = 1M;
+	. = 2M;
 
   	/* text section */
 	.text BLOCK(4K) : ALIGN(4K)

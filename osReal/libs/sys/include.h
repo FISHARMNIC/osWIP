@@ -1,5 +1,6 @@
 #pragma once
 
+// optimized numlen from stack overflow
 int numLen(int32_t x)
 {
     // this is either a fun exercise in optimization
@@ -38,6 +39,7 @@ int numLen(int32_t x)
 }
 
 #include "../display/include.h"
-#include "malloc.c"
+#include "malloc_temp.c"
 #include "linked.c"
 #include "strings.c"
+#include "linked_dict.c"

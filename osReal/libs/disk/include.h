@@ -1,3 +1,5 @@
+// note: all of the FAT data names are from fatgen103.pdf
+
 #pragma once
 #include "../ports/include.h"
 
@@ -12,7 +14,7 @@
 #define ATA_WAIT_DRQ() while (!(inb(0x1F7) & STATUS_DRQ))
 
 #define NOP_DELAY(s)            \
-    for (int n = 0; n < s; n++) \
+    for (int i = 0; i < s; i++) \
     asm("nop")
 
 // offset table https://wiki.osdev.org/FAT#FAT_32 -> imp. details, BPB
@@ -48,8 +50,65 @@ typedef struct
     uint32_t BS_VolID;
     char BS_VolLab[11];
     char BS_FilSysType[8];
-} __attribute__((packed)) bpb_t;
+} __attribute__((packed)) bpb_raw_t;
 
+typedef struct
+{
+    uint32_t rootDirSectors;     // number of sectors occupied by root
+    uint32_t total_sectors;      // sectors per fat
+    uint32_t fat_size;
+    uint32_t firstFatSector;
+    uint32_t firstDataSector;    // first cluster 2 sector ON VOLUME. To get global, add BPB_VOLUME_OFFSET
+    uint32_t dataSectorCount;    // sector count in data region
+    uint32_t clusterCount;       // number of clusters
+    uint32_t rootSec;            // root directory
+} FAT_info_t;
+
+typedef struct
+{
+    uint32_t secNum;
+    uint32_t entryOffset;
+} FAT_cluster_info_t;
+
+typedef struct
+{
+    char fileName[11];
+    uint8_t attributes;
+    uint8_t _reserved;
+    uint8_t creationTimeSec;
+    uint16_t creationTime;
+    uint16_t creationDate;
+    uint16_t lastAccessedDate;
+    uint16_t clusNumHigh;
+    uint16_t lastModifiedTime;
+    uint16_t lastModifiedDate;
+    uint16_t clusNumLow;
+    uint32_t fileSizeBytes;
+} FAT_entry_t;
+
+typedef struct
+{
+    uint8_t order;
+    char firstChars[10];
+    uint8_t _attribute;
+    uint8_t longEntryType;
+    uint8_t checkSum;
+    char secChars[12];
+    uint16_t _reserved;
+    char lastChars[4];
+} FAT_longFileName_t;
+
+typedef struct
+{
+    char* name;
+    uint32_t size;
+    uint32_t isDir;
+    FAT_entry_t info;
+} FAT_entryInfo;
+
+#define BPB_VOLUME_OFFSET 2048
 
 #include "ata.c"
-#include "mbr.c"
+#include "bpb.c"
+#include "fat.c"
+#include "files.c"

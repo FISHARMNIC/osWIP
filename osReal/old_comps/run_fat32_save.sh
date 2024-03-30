@@ -10,6 +10,7 @@ echo "********************COPYING DISK********************"
 
 
 dd if=/dev/zero of=bin/compiled/disk.img bs=512 count=131072
+dd if=bin/compiled/kernel.o of=bin/compiled/disk.img bs=512 seek=0 conv=notrunc
 
 limactl shell debian fdisk bin/compiled/disk.img <<EOF
 n
@@ -46,12 +47,8 @@ limactl shell debian sudo grub-install --target=i386-pc --root-directory=/mnt --
 
 echo "********************COPYING FILE SYSTEM********************"
 
-#i386-elf-ld bin/compiled/kernel.o bin/compiled/boot.o -o bin/compiled/MyOS.bin -nostdlib
-
-limactl shell debian sudo cp bin/compiled/MyOS.bin /mnt/boot/MyOS.bin
+limactl shell debian sudo cp bin/isodir/boot/myos.bin /mnt/boot/myos.bin
 limactl shell debian sudo cp bin/isodir/boot/grub/grub.cfg /mnt/boot/grub/grub.cfg
-limactl shell debian sudo mkdir /mnt/test
-limactl shell debian sudo cp bin/test/hello.txt /mnt/test/hello.txt
 
 echo "********************REMOVING LOOPBACKS********************"
 

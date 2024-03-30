@@ -1,7 +1,7 @@
 // todo, re work this library. A lot of reused stuff that could be abstracted
 // can mask be rewritten using shifting instead?
 
-static int cx, cy;
+static int px, py;
 uint8_t *glyph;
 
 #define mask(offset) (1 << (offset))
@@ -11,11 +11,11 @@ uint8_t *glyph;
 void gfx_drawGlyph_ctx(int x, int y, uint8_t* glyph_, gfx_ctx_t* ctx)
 {
     y += CHAR_HEIGHT;
-    for (cy = 0; cy < 16; cy++)
+    for (py = 0; py < 16; py++)
     {
-        for (cx = 1; cx < 9; cx++)
+        for (px = 1; px < 9; px++)
         {
-            gfx_drawPixel_color((glyph_[cy] & mask(8 - cx)) ? ctx->color_fg : ctx->color_bg, x + cx, y + cy - 12);
+            gfx_drawPixel_color((glyph_[py] & mask(8 - px)) ? ctx->color_fg : ctx->color_bg, x + px, y + py - 12);
         }
     }
 }
@@ -37,24 +37,24 @@ void gfx_drawTransparentChar_color(char character, int x, int y, int col)
 {
     glyph = (uint8_t*)((unsigned int)VGA_FONT + ((unsigned int)(character) * 16));
     y += CHAR_HEIGHT;
-    for (cy = 0; cy < 16; cy++)
+    for (py = 0; py < 16; py++)
     {
-        for (cx = 1; cx < 9; cx++)
+        for (px = 1; px < 9; px++)
         {
-            if(glyph[cy] & mask(8 - cx)) 
-                gfx_drawPixel_color(col, x + cx, y + cy - 12);
+            if(glyph[py] & mask(8 - px)) 
+                gfx_drawPixel_color(col, x + px, y + py - 12);
         }
     }
 }
 
 void gfx_drawInvertedTranparentGlyph(uint8_t* glyph, int x, int y)
 {
-    for (cy = 0; cy < 16; cy++)
+    for (py = 0; py < 16; py++)
     {
-        for (cx = 1; cx < 8; cx++)
+        for (px = 1; px < 8; px++)
         {
-            if(glyph[cy] & mask(8 - cx)) 
-                gfx_drawInvertedPixel(x + cx, y + cy - 12);
+            if(glyph[py] & mask(8 - px)) 
+                gfx_drawInvertedPixel(x + px, y + py - 12);
         }
     }
 }

@@ -23,3 +23,48 @@ void itoa(int32_t number, char* buff)
         }
     }
 }
+
+void memcpy(char* dest, char* src, uint32_t size)
+{
+    while(size > 0)
+    {
+        *dest = *src;
+        dest++;
+        src++;
+        size--;
+    }
+}
+
+uint32_t strcut(char* string, char c)
+{
+    int len = 0;
+    while(*string != c)
+    {
+        len++;
+        string++;
+    }
+    *string = 0;
+    return len;
+}
+
+uint32_t strlen(char* string)
+{
+    int len = 0;
+    while(*string != 0)
+    {
+        len++;
+        string++;
+    }
+    return len;
+}
+
+uint32_t strcmp(char* a, char* b)
+{
+    while(*a == *b)
+    {
+        if(*a == 0) return 0;
+        a++;
+        b++;
+    }
+    return *a - *b;
+}

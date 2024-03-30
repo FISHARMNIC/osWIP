@@ -6,8 +6,11 @@ void tty_init_ctx(int x, int y, int cols, gfx_ctx_t *gfx_ctx, tty_ctx_t *tty_ctx
         .current_x = x,
         .current_y = y + 16,
         .cols = cols * gfx_ctx->char_spacing,
+        .rows = 20 * gfx_ctx->line_spacing,
         .text_ctx = *gfx_ctx};
 }
+
+static inline void gfx_clearRect(int x, int y, int width, int height);
 
 void tty_putChar_ctx(char character, tty_ctx_t *ctx)
 {
@@ -19,8 +22,17 @@ void tty_putChar_ctx(char character, tty_ctx_t *ctx)
     }
     if (nl || ((ctx->current_x - ctx->bounds_x) > ctx->cols))
     {
-        ctx->current_y+= ctx->text_ctx.line_spacing;
-        ctx->current_x = ctx->bounds_x;
+        // if ((ctx->current_y - ctx->bounds_y) > ctx->rows)
+        // {
+        //     ctx->current_y = ctx->bounds_y;
+        //     ctx->current_x = ctx->bounds_x;
+        //     //gfx_clearRect(ctx->bounds_x, ctx->bounds_y, ctx->cols * ctx->text_ctx.char_spacing,ctx->rows * ctx->text_ctx.line_spacing);
+        // }
+        // else
+        // {
+            ctx->current_y += ctx->text_ctx.line_spacing;
+            ctx->current_x = ctx->bounds_x;
+        // }
     }
 }
 
@@ -52,12 +64,13 @@ void tty_putInt_ctx(int32_t number, tty_ctx_t *ctx)
 {
     int char_spacing = ctx->text_ctx.char_spacing;
 
-    if(number < 0)
+    if (number < 0)
     {
         number = -number;
         tty_putChar('-');
     }
-    else if (number == 0) {
+    else if (number == 0)
+    {
         tty_putChar('0');
         ctx->current_x += char_spacing;
         return;
@@ -66,13 +79,13 @@ void tty_putInt_ctx(int32_t number, tty_ctx_t *ctx)
     int len = numLen((uint32_t)number) - 1;
     ctx->current_x += len * char_spacing;
 
-        while (number >= 1)
-        {
-            tty_putChar((char)(number % 10) + 48);
-            number /= 10;
-            ctx->current_x -= char_spacing * 2;
-        }
-    ctx->current_x += (len+2) * char_spacing;
+    while (number >= 1)
+    {
+        tty_putChar((char)(number % 10) + 48);
+        number /= 10;
+        ctx->current_x -= char_spacing * 2;
+    }
+    ctx->current_x += (len + 2) * char_spacing;
 }
 
 static inline void tty_putInt(uint32_t number)

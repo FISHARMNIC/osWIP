@@ -26,7 +26,8 @@ static inline void gfx_drawPixel(int x, int y)
 
 static inline void gfx_drawInvertedPixel(int x, int y)
 {
-    VGARAM[x + y * SCREEN_WIDTH] = ~VGARAM[x + y * SCREEN_WIDTH];
+    uint32_t addr = x + y * SCREEN_WIDTH;
+    VGARAM[addr] = ~VGARAM[addr];
 }
 
 /// @brief Initiate a context
