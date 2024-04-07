@@ -98,6 +98,13 @@ isr_stub_\a\():
     jmp irq_req
 .endm
 
+.macro int_no_pic a
+isr_stub_\a\():
+    movb $\a\(), isr_exception_type
+    cli
+    jmp irq_req
+.endm
+
     // mov %dx, %ax
     // push %eax
     // mov $0x10, %ax
@@ -177,6 +184,9 @@ irq 44
 irq 45
 irq 46
 irq 47
+int_no_pic 48
+int_no_pic 49
+int_no_pic 50
 
 //     call kb_handler_isr
 //     iret
@@ -230,6 +240,9 @@ isr_stub_table:
 .4byte isr_stub_45
 .4byte isr_stub_46
 .4byte isr_stub_47
+.4byte isr_stub_48
+.4byte isr_stub_49
+.4byte isr_stub_50
 
 _start:
 

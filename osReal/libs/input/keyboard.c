@@ -1,6 +1,6 @@
 static volatile unsigned char keyboard_sc = 0; //must be volatile so that compiler doesn't cache in getch func_ttions
 
-void keyboard_handler()
+void keyboard_handler(regs32 r)
 {
   keyboard_sc = inb(KEYBOARD_PORT);
 }

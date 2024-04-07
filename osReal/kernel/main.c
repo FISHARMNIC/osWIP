@@ -5,12 +5,15 @@ CLICKING IN THE GREEN TEXT AREA FIXES ISSUE
 
 #include <stdint.h>
 
+#include "../libs/asm/include.h"
 #include "../libs/sys/include.h"
-
 #include "../libs/display/include.h"
 #include "../libs/interrupts/include.h"
 #include "../libs/input/include.h"
 #include "../libs/disk/include.h"
+
+#include "../libs/syscalls/include.h"
+
 #include "desktop/include.h"
 
 //uint16_t data[500] = {'A','B','C','D'};
@@ -44,6 +47,8 @@ void kern_postBootSequence()
     enable_interrupts();                                    // asm sti
     tty_putString("... Interrupts active\n");
 
+    syscalls_init();
+    tty_putString("... Syscalls enabled\n");
     //ata_send_identify(ata_idenfity_buffer);
     tty_putString("==== Hit any key to load desktop ====\n");
 

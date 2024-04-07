@@ -73,7 +73,7 @@ static void mouse_handleMove(int8_t dx, int8_t dy)
   }
 }
 
-void mouse_handler()
+void mouse_handler(regs32 r)
 {
   switch (mouse_cycle)
   {

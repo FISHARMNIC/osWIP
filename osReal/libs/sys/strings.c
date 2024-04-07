@@ -68,3 +68,15 @@ uint32_t strcmp(char* a, char* b)
     }
     return *a - *b;
 }
+
+void strcat(char* a, char* b)
+{
+    memcpy(a + strlen(a), b, strlen(b) + 1);
+}
+
+void strcatch(char* a, char b)
+{
+    char* offset = a + strlen(a);
+    *(offset) = b;
+    *(offset + 1) = 0;
+}

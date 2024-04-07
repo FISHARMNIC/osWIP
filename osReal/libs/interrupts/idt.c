@@ -1,17 +1,19 @@
-extern void exception_handler(struct regs32 regs) {
-    gfx_db_end();
+extern void exception_handler(regs32 regs) {
+    gfx_db_end(); // make sure we aren't in db
+    // blue screen
     gfx_fillRect_col(0,0, SCREEN_WIDTH, SCREEN_HEIGHT, FORMAT_COLOR(0, 0, COL_BLUE_MAX));
     gfx_drawString("CRITICAL FAULT",20,20);
     gfx_drawInt(isr_exception_type, 30, 20);
+    // halt processor
     asm volatile("cli; jmp .;");
 }
 
-extern void irq_handler(struct regs32 regs) {
+extern void irq_handler(regs32 regs) {
     uint32_t irq = isr_exception_type - 33;
-    //gfx_drawInt(irq, 300,300);
+    //gfx_drawInt(irq, 30, 20);
     if(idt_customs[irq] != 0)
     {
-        ((func_t*)(idt_customs[irq]))();
+        (idt_customs[irq])(regs);
     }
     PIC_sendEOI(irq);
 }
@@ -46,7 +48,7 @@ void idt_load_stubs() {
         idt_customs[vector] = 0;
     }
 
-    for (vector = 32; vector < 48; vector++) {
+    for (vector = 32; vector < IDT_CURRENT_ENTRIES; vector++) {
         idt_set_gate(vector, isr_stub_table[vector], 0x8E);
     }
 

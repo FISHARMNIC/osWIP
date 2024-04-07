@@ -51,8 +51,11 @@ echo "********************COPYING FILE SYSTEM********************"
 limactl shell debian sudo cp bin/compiled/MyOS.bin /mnt/boot/MyOS.bin
 limactl shell debian sudo cp bin/isodir/boot/grub/grub.cfg /mnt/boot/grub/grub.cfg
 limactl shell debian sudo mkdir /mnt/test
+limactl shell debian sudo mkdir /mnt/test/test2
 limactl shell debian sudo cp bin/test/hello.txt /mnt/test/hello.txt
+limactl shell debian sudo cp bin/test/hello.txt /mnt/test/test2/hello2.txt
 
+limactl shell debian sudo ls /mnt
 echo "********************REMOVING LOOPBACKS********************"
 
 limactl shell debian sudo umount /mnt

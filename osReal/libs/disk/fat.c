@@ -26,7 +26,7 @@ uint32_t FAT_get_cluster_num(FAT_entry_t* data)
     return data->clusNumLow | ((uint32_t)(data->clusNumHigh) << 16);
 }
 
-FAT_entryInfo* FAT_readEntry(uint8_t fsectBuff[512])
+FAT_entryInfo* FAT_readEntry(uint8_t* fsectBuff)
 {
     static char outputName16[64];
     static char outputName8[64];
@@ -41,7 +41,7 @@ FAT_entryInfo* FAT_readEntry(uint8_t fsectBuff[512])
         FAT_entryInfo* returnSt = (FAT_entryInfo*) malloc(sizeof(FAT_entryInfo));
 
         if(fsectBuff[11] == 0x0F) { // long file name entry
-            tty_putString_nl("LONG FILE NAME");
+            //tty_putString_nl("LONG FILE NAME");
 
             uint32_t fnOffset = 0;
             uint32_t bOff = 0;
@@ -81,7 +81,7 @@ FAT_entryInfo* FAT_readEntry(uint8_t fsectBuff[512])
             returnSt->size = sizeof(FAT_longFileName_t) + sizeof(FAT_entry_t);
             return returnSt;
         } else {                    // normal
-            tty_putString("SHORT FILE NAME: ");
+            //tty_putString("SHORT FILE NAME: ");
             file = (FAT_entry_t*) fsectBuff;
             //for(int i = 0; i < 20; i++)
                 //tty_putChar(((char*)(file))[i]);
@@ -90,7 +90,7 @@ FAT_entryInfo* FAT_readEntry(uint8_t fsectBuff[512])
             char* outStr = (char*) malloc(len);
             memcpy(outStr, file->fileName, len);
 
-            tty_putString_nl(outStr);
+            //tty_putString_nl(outStr);
 
             returnSt->info = *file;
             returnSt->name = outStr;

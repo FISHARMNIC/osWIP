@@ -19,7 +19,7 @@ if (i386-elf-gcc -ffreestanding -Wall -c kernel/main.c -o bin/compiled/kernel.o)
         mkdir -p bin/isodir/boot/grub
         cp bin/compiled/MyOS.bin bin/isodir/boot/MyOS.bin
         cp boot/grub.cfg bin/isodir/boot/grub/grub.cfg
-        limactl shell debian grub-mkrescue -o bin/compiled/MyOS.iso bin/isodir
+        # limactl shell debian grub-mkrescue -o bin/compiled/MyOS.iso bin/isodir
 
         exit
     fi

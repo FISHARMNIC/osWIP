@@ -1,15 +1,15 @@
 #pragma once
 
 #include <stdint.h>
+
 #define IDT_MAX_DESCRIPTORS 256
+#define IDT_CURRENT_ENTRIES 50
 
 extern char gdt_code;
 extern char gdt_start;
 extern int _CODE_SEG;
 
 #define CODE_SEG (&gdt_code - &gdt_start)
-
-typedef void func_t(void);
 
 typedef struct {
 	uint16_t    isr_low;      // The lower 16 bits of the ISR's address
@@ -22,7 +22,7 @@ typedef struct {
 __attribute__((aligned(0x10))) 
 static idt_entry_t idt[IDT_MAX_DESCRIPTORS]; // Create an array of IDT entries; aligned for performance
 
-void* idt_customs[32];
+interrupt_fn_t* idt_customs[IDT_CURRENT_ENTRIES];
 
 typedef struct {
 	uint16_t	limit;
@@ -30,13 +30,6 @@ typedef struct {
 } __attribute__((packed)) idtr_t;
 
 extern int8_t isr_exception_type;
-
-struct regs32
-{
-    uint32_t edi, esi, ebp, esp, ebx, edx, ecx, eax; 
-    uint32_t intn, errc;
-    uint32_t eip, cs, eflags, usresp, ss; 
-};
 
 #define PIC1 0x20 /* IO base address for master PIC */
 #define PIC2 0xA0 /* IO base address for slave PIC */

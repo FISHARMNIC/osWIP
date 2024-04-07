@@ -42,7 +42,7 @@ linked_raw_t *linked_read_link(linked_raw_t *list, int index)
 
 #define linked_read(list, index, type) (type)(linked_read_link(list, index)->item)
 
-void linked_add(linked_raw_t **list, void *item) // needs dp because we want to load the variable itself if it's null
+linked_raw_t* linked_add(linked_raw_t **list, void *item) // needs dp because we want to load the variable itself if it's null
 {
     linked_raw_t *new = (linked_raw_t *)malloc(sizeof(linked_raw_t));
     *new = (linked_raw_t){
@@ -63,15 +63,21 @@ void linked_add(linked_raw_t **list, void *item) // needs dp because we want to 
         }
         ret->next = new;
     }
+    return new;
 }
 
 static void *remove_noFree(linked_raw_t **list, int index)
-{
+{ // todo add remove last
     if(index == 0)
     {
         void* copy = (void*) *list;
         *list = (*list)->next;
         return copy;
+    } else if(index == -1){
+        linked_raw_t* ptr = linked_read_link(*list, linked_length(*list) - 1);
+        void *save = ptr;
+        ptr->next = 0;
+        return save;
     } else {
         linked_raw_t *leftHand = linked_read_link(*list, index - 1);
         linked_raw_t *rightHand = (linked_raw_t *)((linked_raw_t *)leftHand->next)->next;

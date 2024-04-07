@@ -1,5 +1,5 @@
 uint32_t tick = 0;
-static void timer_callback()
+static void timer_callback(regs32 r)
 {
     tick++;
     gfx_drawInt(tick++,325,325);
