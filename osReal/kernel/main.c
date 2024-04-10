@@ -10,6 +10,7 @@ CLICKING IN THE GREEN TEXT AREA FIXES ISSUE
 #include "../libs/display/include.h"
 #include "../libs/interrupts/include.h"
 #include "../libs/input/include.h"
+#include "../libs/exec/include.h"
 #include "../libs/disk/include.h"
 
 #include "../libs/syscalls/include.h"
@@ -49,6 +50,9 @@ void kern_postBootSequence()
 
     syscalls_init();
     tty_putString("... Syscalls enabled\n");
+
+    bpb_init();
+    tty_putString("... BPB read and disk ready\n");
     //ata_send_identify(ata_idenfity_buffer);
     tty_putString("==== Hit any key to load desktop ====\n");
 

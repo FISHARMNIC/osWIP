@@ -95,34 +95,53 @@ FAT_entryInfo *findDirInDir(char *name, uint8_t fsectBuff[512])
 
 uint8_t *findDirFromRoot(char *name)
 {
+    // not actually entering second dir after first
     static uint8_t fsectBuff[512];
 
     char *afterSlash = dirnameFirstSlash(name); // name is now before slash
     uint32_t fromCluster = bpb_info.BPB_RootClus;
 back:
-    FAT_readFirstSectorOfCluster(fsectBuff, fromCluster);
-    FAT_entryInfo *info = findDirInDir(name, fsectBuff);
-    fromCluster = FAT_get_cluster_num(&(info->info));
+    FAT_readFirstSectorOfCluster(fsectBuff, fromCluster); // load data from pointed cluster
+    FAT_entryInfo *info = findDirInDir(name, fsectBuff);  // find directory in cluster
+    fromCluster = FAT_get_cluster_num(&(info->info));     // get next cluster
     name = afterSlash;
     if (name != 0)
     {
         afterSlash = dirnameFirstSlash(name);
+        tty_putString_nl(name);
         free(info);
         goto back;
     }
+
+    FAT_readFirstSectorOfCluster(fsectBuff, fromCluster); // load in next
     tty_putString_nl("directory found");
+    free(info);
 
     return fsectBuff;
 }
 
-void readFile(char *dir, char *name, char *outBuffer, int32_t size)
+/// @brief 
+/// @param dir 
+/// @param name 
+/// @param outBuffer 
+/// @param size 
+/// @return size read
+uint32_t readFile(char *dir, char *name, char *outBuffer, int32_t size)
 {
     uint8_t *fsectBuff = findDirFromRoot(dir);
+
+    // for (int i = 0; i < 512; i++)
+    // {
+    //     tty_putChar(((char*)fsectBuff)[i]);
+    // }
+    // return;
 
     uint32_t offset = 0;
     FAT_entryInfo *file = FAT_readEntry(fsectBuff);
     while (file != 0)
     {
+        tty_putString("testing "); // del
+        tty_putString_nl(file->name); // del
         if (!file->isDir)
         {
             // todo, check if right name
@@ -133,6 +152,7 @@ void readFile(char *dir, char *name, char *outBuffer, int32_t size)
                 tty_putString_nl("found!");
                 if(size == -1)
                     size = file->info.fileSizeBytes;
+                uint32_t sret = size;
                 
                 uint32_t clusterNum = FAT_get_cluster_num(&(file->info)); // get first cluster of chain
                 FAT_readFirstSectorOfCluster(fsectBuff, clusterNum);      // read first cluster
@@ -141,7 +161,7 @@ void readFile(char *dir, char *name, char *outBuffer, int32_t size)
                 {
                     memcpy(outBuffer, (char *)fsectBuff, size);
                     free(file);
-                    return;
+                    return sret;
                 }
 
                 while (size > 0)
@@ -153,13 +173,14 @@ void readFile(char *dir, char *name, char *outBuffer, int32_t size)
                     FAT_readFirstSectorOfCluster(fsectBuff, clusterNum);
                     free(file);
                 }
-                return;
+                return sret;
             }
         }
         offset += file->size;
         free(file);
         file = FAT_readEntry(fsectBuff + offset);
     }
+    return 0;
 }
 
 void run_disk_test()
@@ -170,15 +191,32 @@ void run_disk_test()
 
     tty_putString("CREATING FS DIRECTORIES\n");
 
-    bpb_init();
+    char* outBuff = malloc(1000);
+    uint32_t size = readFile("test/test2", "printHello", outBuff, -1);
+    tty_putInt_nl(size);
 
-    char* outBuff = malloc(600);
-    readFile("test/test2", "hello.txt", outBuff, 600);
-    for (int i = 0; i < 600; i++)
-    {
-        tty_putChar(outBuff[i]);
-    }
+    elf_section_offsets_t* headers = elf_getHeaderInfo(outBuff, size);
+   
+    tty_putInt_nl(headers->entry_fileOff);
+    tty_putInt_nl(headers->text_offset);
+    tty_putInt_nl(headers->data_offset);
 
-    asm("mov $0, %eax; int $49");
+    // works without any data sections. see relocating stuff not sure. 
+    // prints in top left corner 
+    elf_exec(headers);
+
+    tty_putString_nl("done");
+    
+
+
+// old 
+    // char* outBuff = malloc(600);
+    // readFile("test/test2", "hello2.txt", outBuff, 600);
+    // for (int i = 0; i < 600; i++)
+    // {
+    //     tty_putChar(outBuff[i]);
+    // }
+
+    // asm("mov $0, %eax; int $49");
 
 }

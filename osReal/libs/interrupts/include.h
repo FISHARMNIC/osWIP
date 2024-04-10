@@ -12,11 +12,11 @@ extern int _CODE_SEG;
 #define CODE_SEG (&gdt_code - &gdt_start)
 
 typedef struct {
-	uint16_t    isr_low;      // The lower 16 bits of the ISR's address
-	uint16_t    kernel_cs;    // The GDT segment selector that the CPU will load into CS before calling the ISR
-	uint8_t     reserved;     // Set to zero
-	uint8_t     attributes;   // Type and attributes; see the IDT page
-	uint16_t    isr_high;     // The higher 16 bits of the ISR's address
+    uint16_t    isr_low;      // The lower 16 bits of the ISR's address
+    uint16_t    kernel_cs;    // The GDT segment selector that the CPU will load into CS before calling the ISR
+    uint8_t     reserved;     // Set to zero
+    uint8_t     attributes;   // Type and attributes; see the IDT page
+    uint16_t    isr_high;     // The higher 16 bits of the ISR's address
 } __attribute__((packed)) idt_entry_t;
 
 __attribute__((aligned(0x10))) 
@@ -25,8 +25,8 @@ static idt_entry_t idt[IDT_MAX_DESCRIPTORS]; // Create an array of IDT entries; 
 interrupt_fn_t* idt_customs[IDT_CURRENT_ENTRIES];
 
 typedef struct {
-	uint16_t	limit;
-	uint32_t	base;
+    uint16_t    limit;
+    uint32_t    base;
 } __attribute__((packed)) idtr_t;
 
 extern int8_t isr_exception_type;
@@ -48,22 +48,22 @@ extern int8_t isr_exception_type;
 #define PIC_ACK 0x20
 
 enum {
-	IRQ_TIMER,
-	IRQ_KEYBOARD,
-	IRQ_CASCADE,
-	IRQ_COM2,
-	IRQ_COM1,
-	IRQ_LPT2,
-	IRQ_FLOPPY,
-	IRQ_LPT1, // spurious
-	IRQ_CMOS,
-	IRQ_PERIPH1,
-	IRQ_PERIPH2,
-	IRQ_PERIPH3,
-	IRQ_MOUSE,
-	IRQ_COP,
-	IRQ_ATA_PRIM,
-	IRQ_ATA_SEC,
+    IRQ_TIMER,
+    IRQ_KEYBOARD,
+    IRQ_CASCADE,
+    IRQ_COM2,
+    IRQ_COM1,
+    IRQ_LPT2,
+    IRQ_FLOPPY,
+    IRQ_LPT1, // spurious
+    IRQ_CMOS,
+    IRQ_PERIPH1,
+    IRQ_PERIPH2,
+    IRQ_PERIPH3,
+    IRQ_MOUSE,
+    IRQ_COP,
+    IRQ_ATA_PRIM,
+    IRQ_ATA_SEC,
 };
 
 #include "../display/include.h"

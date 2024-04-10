@@ -33,8 +33,13 @@ FAT_entryInfo* FAT_readEntry(uint8_t* fsectBuff)
 
     FAT_entry_t* file;
     
-    if(fsectBuff[0] == 0) return 0;
+    if(fsectBuff[0] == 0) 
+    {
+        tty_putString_nl("END");
+        return 0;
+    }
     if(fsectBuff[0] == 0xE5) {
+        tty_putString_nl("UNUSED");
         return 0; // shouldnt stop, just unsused. Fixed later
     } else {
 
