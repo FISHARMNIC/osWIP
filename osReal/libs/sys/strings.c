@@ -35,6 +35,16 @@ void memcpy(char* dest, char* src, uint32_t size)
     }
 }
 
+void memset(char* dest, uint32_t size, uint32_t num)
+{
+    while(size > 0)
+    {
+        *dest = num;
+        dest++;
+        size--;
+    }
+}
+
 uint32_t strcut(char* string, char c)
 {
     int len = 0;

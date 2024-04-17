@@ -1,9 +1,9 @@
-void gfx_db_begin()
+static inline void gfx_db_begin()
 {
     VGARAM = (uint16_t *)VGA_BACKBUFFER;
 }
 
-void gfx_db_end()
+static inline void gfx_db_end()
 {
     VGARAM = (uint16_t *)VGA_ADDRESS;
 }

@@ -1,4 +1,4 @@
-#define MAX_MEMORY 10000
+#define MAX_MEMORY 40000
 char malloc_memory[MAX_MEMORY];
 char* ptr = (char*) malloc_memory;
 

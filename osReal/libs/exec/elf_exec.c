@@ -1,14 +1,26 @@
+/*
+data is being read from 0x0, it needs to be offset
+use paging, segments, or something. No idea
+Look into Virtual Memory Addressing
+
+
+*/
+
 
 void elf_exec(elf_section_offsets_t *header)
 {
-    // mov %%dx, %%ds  causes GPE. no idea. anything that sets DS causes segfault.
+    tty_putString("ELF - global data: ");
+    tty_putInt_nl((uint32_t)(&(header->file[header->data_offset])));
     asm volatile(
         "\npusha \n\
         mov %0, %%eax \n\
+        mov %1, %%ebx \n\
+        push %%ebx\n\
         call *%%eax \n\
+        pop %%ebx\n\
         popa\n"
-        :: "g"(&(header->file[header->entry_fileOff]))
-        : "%eax");
+        :: "g"(&(header->file[header->entry_fileOff])), "g"(&(header->file[header->data_offset]))
+        : "%eax", "%ebx");
 }
 
 

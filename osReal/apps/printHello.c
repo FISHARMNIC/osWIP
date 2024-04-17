@@ -1,11 +1,13 @@
+#include "includes/application.c"
 #include "includes/stdio.c"
 
-//int myVar = 123;
+int myVar = 123;
 
-void _start()
+void main()
 {
-    //volatile char* char1 = "hello";
+    char* char1 = "hello";
     //volatile char* char2 = "byebye";
-    myputs_test();
-    //myputi_test(myVar);
+    myputs_test(char1);
+    // reads from bad address. needs to be offset
+    myputi_test(myVar);
 }

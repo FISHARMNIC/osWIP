@@ -80,12 +80,16 @@
 #define KEY_TAB 0x0F
 #define KEY_UP 0x48
 
+#define KEYCODE_RISING (keyboard_sc < 128)
+
+
 const char KEYSET[128] = "`^1234567890-=\b\tqwertyuiop[]\\ asdfghjkl;'\n  zxcvbnm,./      ~!@#$%^&*()_+  QWERTYUIOP{}| ASDFGHJKL:\"   ZXCVBNM<>?";
 
 typedef void keyboard_fn(char);
 
 typedef void onClick_fn(int32_t, int32_t, int8_t);
 typedef void onMove_fn(int32_t, int32_t);
+typedef void onKey_fn(char);
 
 #include "../ports/include.h"
 #include "keyboard.c"

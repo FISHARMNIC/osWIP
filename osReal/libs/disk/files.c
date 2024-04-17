@@ -78,11 +78,11 @@ FAT_entryInfo *findDirInDir(char *name, uint8_t fsectBuff[512])
     {
         if (file->isDir)
         {
-            tty_putString("checking directory: ");
-            tty_putString_nl(file->name);
+            //tty_putString("checking directory: ");
+            //tty_putString_nl(file->name);
             if (strcmp(file->name, name) == 0)
             {
-                tty_putString_nl("is equal");
+                tty_putString_nl("dir is equal");
                 return file;
             }
         }
@@ -108,7 +108,7 @@ back:
     if (name != 0)
     {
         afterSlash = dirnameFirstSlash(name);
-        tty_putString_nl(name);
+        //tty_putString_nl(name);
         free(info);
         goto back;
     }
@@ -140,13 +140,13 @@ uint32_t readFile(char *dir, char *name, char *outBuffer, int32_t size)
     FAT_entryInfo *file = FAT_readEntry(fsectBuff);
     while (file != 0)
     {
-        tty_putString("testing "); // del
-        tty_putString_nl(file->name); // del
+        //tty_putString("testing "); // del
+        //tty_putString_nl(file->name); // del
         if (!file->isDir)
         {
             // todo, check if right name
-            tty_putString("CHECKING:::");
-            tty_putString_nl(file->name);
+            //tty_putString("CHECKING:::");
+            //tty_putString_nl(file->name);
             if ((strcmp(file->name, name) == 0))
             {
                 tty_putString_nl("found!");
@@ -191,14 +191,23 @@ void run_disk_test()
 
     tty_putString("CREATING FS DIRECTORIES\n");
 
-    char* outBuff = malloc(1000);
+    // char* outBuff = malloc(20000);
+    // uint32_t size = readFile("test/test2", "chickenimg", outBuff, -1);
+    // gfx_drawBuffer(50,50,100, 100, (uint16_t*)outBuff);
+    // memset(outBuff, 20000, 0);
+
+   char* outBuff = malloc(1000);
     uint32_t size = readFile("test/test2", "printHello", outBuff, -1);
+    tty_putString("ELF FILE SIZE: ");
     tty_putInt_nl(size);
 
     elf_section_offsets_t* headers = elf_getHeaderInfo(outBuff, size);
    
+    tty_putString("ELF ENTRY OFF: ");
     tty_putInt_nl(headers->entry_fileOff);
+    tty_putString("ELF TEXT  OFF: ");
     tty_putInt_nl(headers->text_offset);
+    tty_putString("ELF DATA  OFF: ");
     tty_putInt_nl(headers->data_offset);
 
     // works without any data sections. see relocating stuff not sure. 

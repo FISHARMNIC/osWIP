@@ -15,7 +15,7 @@ void syscall(regs32 r)
 void syscalls_init()
 {
     syscall_create(_syscall_puts, SYSCALL_PUTS);
+    syscall_create(_syscall_puti, SYSCALL_PUTI);
     
-
     idt_load_interrupt(SYSCALLS_IRQ_ENTRY, syscall);
 }

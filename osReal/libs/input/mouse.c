@@ -66,11 +66,11 @@ static void mouse_render(int8_t dx, int8_t dy)
 
 static void mouse_handleMove(int8_t dx, int8_t dy)
 {
-  mouse_render(dx, dy);
   if (mouse_moveFn != 0)
   {
     mouse_moveFn(mouse_x, mouse_y);
   }
+  mouse_render(dx, dy);
 }
 
 void mouse_handler(regs32 r)
@@ -128,6 +128,7 @@ char mouse_read()
   return inb(0x60);
 }
 
+// not my code
 void mouse_write(unsigned char a_write) // unsigned char
 {
   // Wait to be able to send a command
@@ -149,15 +150,14 @@ int mouse_detect()
     return 1; // Mouse there
 }
 
+// not my code
 void mouse_init()
 {
-  outb(0x64, 0xd4);
-  outb(0x60, 0xF4);
-  while (inb(0x60) != 0xFA)
-    ; /* Wait for ACK from mouse... */
+  mouse_write(0xF4); // enable
 
-  /* Tell mouse to enable interrupts (IRQ12) */
-  outb(0x64, 0x20);
+  while (inb(0x60) != 0xFA);
+
+  outb(0x64, 0x20); // enable int
 
   unsigned char res = inb(0x60);
   res |= 1 << 1;

@@ -1,4 +1,4 @@
-// 
+// look into PIC, GOT and PLT
 
 elf_section_offsets_t* elf_getHeaderInfo(char *file, uint32_t size)
 {

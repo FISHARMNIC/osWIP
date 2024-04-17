@@ -66,11 +66,11 @@ void kernel_entry()
     // clicking key triggers fault 1, should be irq 1. Only works once since buffer is not being read and EOI not sent.
     kern_postBootSequence();
 
-    tty_putString("TEST1\n");
-    tty_putString("TEST2\n");
-    tty_putString("TEST3\n");
-    tty_putString("TEST4\n");
-    gfx_fillRect(150,200,200,200,&gfx_current_ctx);
+    // tty_putString("TEST1\n");
+    // tty_putString("TEST2\n");
+    // tty_putString("TEST3\n");
+    // tty_putString("TEST4\n");
+    //gfx_fillRect(150,200,200,200,&gfx_current_ctx);
 
     getch();
 

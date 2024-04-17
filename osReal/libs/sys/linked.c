@@ -74,7 +74,7 @@ static void *remove_noFree(linked_raw_t **list, int index)
         *list = (*list)->next;
         return copy;
     } else if(index == -1){
-        linked_raw_t* ptr = linked_read_link(*list, linked_length(*list) - 1);
+        linked_raw_t* ptr = linked_read_link(*list, linked_length(*list) - 2);
         void *save = ptr;
         ptr->next = 0;
         return save;

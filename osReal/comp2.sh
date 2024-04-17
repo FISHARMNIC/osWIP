@@ -1,5 +1,6 @@
-# rm -R bin/compiled/*
-# rm -R bin/isodir/boot/*
+rm -f bin/compiled/MyOS.bin
+rm -f bin/isodir/boot/MyOS.bin
+#rm -R bin/isodir/boot/*
 
 echo 1
 #assemble boot.s file

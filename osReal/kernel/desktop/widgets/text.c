@@ -1,3 +1,10 @@
+typedef struct
+{
+    WIDGET_REQUIRED_ITEMS;
+    char* text;
+} widget_text_t;
+
+
 widget_text_t* widget_text_create(char* text, gfx_ctx_t* ctx)
 {
     widget_text_t* widget = (widget_text_t*) malloc(sizeof(widget_text_t));
